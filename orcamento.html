@@ -16,8 +16,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
+        }   
         :root {
             --azul-escuro: #1A3C5E;
             --azul-medio: #2D6A9F;
@@ -227,7 +226,8 @@
 
         .services-table thead th:nth-child(3),
         .services-table thead th:nth-child(4),
-        .services-table thead th:nth-child(5) {
+        .services-table thead th:nth-child(5),
+        .services-table thead th:nth-child(6) {
             text-align: center;
         }
 
@@ -264,7 +264,8 @@
 
         .services-table tbody td:nth-child(3),
         .services-table tbody td:nth-child(4),
-        .services-table tbody td:nth-child(5) {
+        .services-table tbody td:nth-child(5),
+        .services-table tbody td:nth-child(6) {
             text-align: center;
         }
 
@@ -929,8 +930,9 @@
                     <tr>
                         <th></th>
                         <th>Serviço</th>
+                        <th>Preço Unit.</th>
                         <th>Qtd</th>
-                        <th>Valor Unit.</th>
+                        <th>Desconto</th>
                         <th>Total</th>
                     </tr>
                 </thead>
@@ -999,20 +1001,71 @@
          ============================================ -->
     <script>
         // ---- DATA & SERVICES ----
-        const SERVICES = [
-            { name: 'Sofá 2 lugares', price: 220 },
-            { name: 'Sofá 3 lugares', price: 280 },
-            { name: 'Sofá retrátil / chaise', price: 320 },
-            { name: 'Sofá em L (canto)', price: 380 },
-            { name: 'Sofá 4 lugares ou mais', price: 420 },
-            { name: 'Colchão solteiro', price: 180 },
-            { name: 'Colchão casal', price: 250 },
-            { name: 'Colchão queen', price: 280 },
-            { name: 'Colchão king', price: 300 },
-            { name: 'Poltrona', price: 100 },
-            { name: 'Cadeira estofada', price: 60 },
-            { name: 'Banco de carro completo', price: 450 },
+        const SERVICE_CATEGORIES = [
+            {
+                category: 'SOFÁS',
+                services: [
+                    { name: 'Sofá 2 lugares', price: 220 },
+                    { name: 'Sofá 3 lugares', price: 280 },
+                    { name: 'Sofá retrátil / chaise', price: 320 },
+                    { name: 'Sofá em L (canto)', price: 380 },
+                    { name: 'Sofá 4 lugares ou mais', price: 420 },
+                ]
+            },
+            {
+                category: 'COLCHÕES',
+                services: [
+                    { name: 'Colchão solteiro', price: 180 },
+                    { name: 'Colchão casal', price: 250 },
+                    { name: 'Colchão queen', price: 280 },
+                    { name: 'Colchão king', price: 300 },
+                ]
+            },
+            {
+                category: 'IMPERMEABILIZAÇÃO',
+                services: [
+                    { name: 'Impermeab. Sofá 2 lugares', price: 180 },
+                    { name: 'Impermeab. Sofá 3 lugares', price: 220 },
+                    { name: 'Impermeab. Sofá retrátil / chaise', price: 250 },
+                    { name: 'Impermeab. Sofá em L', price: 260 },
+                    { name: 'Impermeab. Colchão solteiro', price: 100 },
+                    { name: 'Impermeab. Colchão casal', price: 130 },
+                    { name: 'Impermeab. Colchão queen', price: 150 },
+                    { name: 'Impermeab. Poltrona', price: 70 },
+                ]
+            },
+            {
+                category: 'OUTROS',
+                services: [
+                    { name: 'Poltrona', price: 100 },
+                    { name: 'Cadeira estofada', price: 60 },
+                    { name: 'Carro (completo)', price: 450 },
+                ]
+            },
+            {
+                category: 'PACOTES ESPECIAIS',
+                subtitle: 'desconto já incluído no preço',
+                services: [
+                    { name: 'Sofá 3 lug + Impermeab. Sofá 3 lug', price: 450, isPackage: true },
+                    { name: 'Sofá retrátil + Impermeab. retrátil', price: 520, isPackage: true },
+                    { name: 'Sofá em L + Impermeab. Sofá em L', price: 590, isPackage: true },
+                    { name: 'Sofá 3 lug + Colchão casal', price: 480, isPackage: true },
+                    { name: 'Sofá em L + Colchão casal', price: 560, isPackage: true },
+                    { name: 'Sofá 3 lug + Colchão casal + Impermeab. ambos', price: 680, isPackage: true },
+                    { name: 'Sofá em L + Colchão queen + Impermeab. ambos', price: 800, isPackage: true },
+                    { name: 'Sofá 3 lug + 2 Poltronas', price: 430, isPackage: true },
+                    { name: 'Premium: Sofá em L + Colchão queen', price: 600, isPackage: true },
+                ]
+            }
         ];
+
+        // Flatten services for indexing
+        const SERVICES = [];
+        SERVICE_CATEGORIES.forEach(cat => {
+            cat.services.forEach(svc => {
+                SERVICES.push({ ...svc, category: cat.category, subtitle: cat.subtitle || '' });
+            });
+        });
 
         const PIX_DISCOUNT = 0.05;
         const INSTALLMENTS = 4;
@@ -1073,36 +1126,70 @@
             const tbody = document.getElementById('servicesBody');
             tbody.innerHTML = '';
 
-            SERVICES.forEach((svc, i) => {
-                const tr = document.createElement('tr');
-                tr.id = `serviceRow_${i}`;
-                tr.innerHTML = `
-                    <td>
-                        <label class="custom-checkbox">
-                            <input type="checkbox" id="check_${i}" onchange="onServiceChange(${i})">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                    <td class="service-name">${svc.name}</td>
-                    <td>
-                        <input type="number" class="qty-input" id="qty_${i}" value="1" min="1" max="20" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})">
-                    </td>
-                    <td class="service-price">${formatCurrency(svc.price)}</td>
-                    <td class="service-total" id="total_${i}">R$ 0,00</td>
-                `;
-                tbody.appendChild(tr);
+            let globalIndex = 0;
+            SERVICE_CATEGORIES.forEach(cat => {
+                // Category header row
+                const headerTr = document.createElement('tr');
+                headerTr.className = 'category-header';
+                headerTr.innerHTML = `<td colspan="6" style="background:linear-gradient(135deg,var(--azul-escuro),var(--azul-medio));color:#fff;font-weight:700;font-size:0.85rem;padding:10px 16px;letter-spacing:0.04em;">
+                    ${cat.category}${cat.subtitle ? ` <span style="font-weight:400;font-size:0.75rem;opacity:0.8;margin-left:8px;">— ${cat.subtitle}</span>` : ''}
+                </td>`;
+                tbody.appendChild(headerTr);
+
+                cat.services.forEach(svc => {
+                    const i = globalIndex;
+                    const tr = document.createElement('tr');
+                    tr.id = `serviceRow_${i}`;
+
+                    const discountCell = svc.isPackage 
+                        ? `<td style="text-align:center;font-size:0.82rem;color:var(--verde);font-weight:600;">Incluso</td>`
+                        : `<td style="text-align:center;">
+                            <input type="number" class="qty-input" id="discount_${i}" value="0" min="0" step="5" style="width:72px;" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})" placeholder="R$ 0">
+                          </td>`;
+
+                    tr.innerHTML = `
+                        <td>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="check_${i}" onchange="onServiceChange(${i})">
+                                <span class="checkmark"></span>
+                            </label>
+                        </td>
+                        <td class="service-name">${svc.name}</td>
+                        <td class="service-price">${formatCurrency(svc.price)}</td>
+                        <td>
+                            <input type="number" class="qty-input" id="qty_${i}" value="0" min="0" max="20" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})">
+                        </td>
+                        ${discountCell}
+                        <td class="service-total" id="total_${i}">R$ 0,00</td>
+                    `;
+                    tbody.appendChild(tr);
+                    globalIndex++;
+                });
             });
         }
 
         // ---- CALCULATIONS ----
         function onServiceChange(index) {
             const checked = document.getElementById(`check_${index}`).checked;
-            const qty = parseInt(document.getElementById(`qty_${index}`).value) || 1;
+            const qty = parseInt(document.getElementById(`qty_${index}`).value) || 0;
             const row = document.getElementById(`serviceRow_${index}`);
             const totalEl = document.getElementById(`total_${index}`);
+            const discountEl = document.getElementById(`discount_${index}`);
+            const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
 
-            if (checked) {
-                const total = SERVICES[index].price * qty;
+            // Auto-check if qty > 0
+            if (qty > 0 && !checked) {
+                document.getElementById(`check_${index}`).checked = true;
+            }
+            // Auto-uncheck if qty is 0
+            if (qty === 0 && checked) {
+                document.getElementById(`check_${index}`).checked = false;
+            }
+
+            const isChecked = document.getElementById(`check_${index}`).checked;
+
+            if (isChecked && qty > 0) {
+                const total = Math.max(0, (SERVICES[index].price * qty) - discount);
                 totalEl.textContent = formatCurrency(total);
                 row.classList.add('selected');
             } else {
@@ -1119,8 +1206,10 @@
             SERVICES.forEach((svc, i) => {
                 const checked = document.getElementById(`check_${i}`).checked;
                 if (checked) {
-                    const qty = parseInt(document.getElementById(`qty_${i}`).value) || 1;
-                    subtotal += svc.price * qty;
+                    const qty = parseInt(document.getElementById(`qty_${i}`).value) || 0;
+                    const discountEl = document.getElementById(`discount_${i}`);
+                    const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
+                    subtotal += Math.max(0, (svc.price * qty) - discount);
                 }
             });
 
@@ -1137,13 +1226,19 @@
         function getSelectedServices() {
             const selected = [];
             SERVICES.forEach((svc, i) => {
-                if (document.getElementById(`check_${i}`).checked) {
-                    const qty = parseInt(document.getElementById(`qty_${i}`).value) || 1;
+                const checked = document.getElementById(`check_${i}`).checked;
+                const qty = parseInt(document.getElementById(`qty_${i}`).value) || 0;
+                if (checked && qty > 0) {
+                    const discountEl = document.getElementById(`discount_${i}`);
+                    const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
+                    const total = Math.max(0, (svc.price * qty) - discount);
                     selected.push({
                         name: svc.name,
                         price: svc.price,
                         qty: qty,
-                        total: svc.price * qty
+                        discount: discount,
+                        total: total,
+                        isPackage: svc.isPackage || false
                     });
                 }
             });
@@ -1188,11 +1283,13 @@
             document.getElementById('telefoneCliente').value = '';
             document.getElementById('enderecoCliente').value = '';
 
-            SERVICES.forEach((_, i) => {
+            SERVICES.forEach((svc, i) => {
                 document.getElementById(`check_${i}`).checked = false;
-                document.getElementById(`qty_${i}`).value = 1;
+                document.getElementById(`qty_${i}`).value = 0;
                 document.getElementById(`total_${i}`).textContent = 'R$ 0,00';
                 document.getElementById(`serviceRow_${i}`).classList.remove('selected');
+                const discountEl = document.getElementById(`discount_${i}`);
+                if (discountEl) discountEl.value = 0;
             });
 
             generateBudgetNumber();
@@ -1234,11 +1331,13 @@
 
             let serviceRows = '';
             services.forEach((sv, i) => {
+                const discountDisplay = sv.isPackage ? 'Incluso' : formatCurrency(sv.discount);
                 serviceRows += `
                     <tr>
                         <td>${sv.name}</td>
-                        <td style="text-align:center">${sv.qty}</td>
                         <td style="text-align:center">${formatCurrency(sv.price)}</td>
+                        <td style="text-align:center">${sv.qty}</td>
+                        <td style="text-align:center;color:${sv.discount > 0 ? '#1E6B3C' : 'inherit'}">${discountDisplay}</td>
                         <td style="text-align:center;color:#1E6B3C;font-weight:700">${formatCurrency(sv.total)}</td>
                     </tr>`;
             });
@@ -1281,9 +1380,10 @@
                     <thead>
                         <tr>
                             <th>Serviço</th>
+                            <th style="text-align:center">Preço Unit.</th>
                             <th style="text-align:center">Qtd</th>
-                            <th style="text-align:center">Valor Unit.</th>
-                            <th style="text-align:center">Valor Total</th>
+                            <th style="text-align:center">Desconto</th>
+                            <th style="text-align:center">Total</th>
                         </tr>
                     </thead>
                     <tbody>${serviceRows}</tbody>
@@ -1455,8 +1555,8 @@
             y += clientH + 6;
 
             // ---- SERVICES TABLE ----
-            const svcCols = [contentW * 0.42, contentW * 0.14, contentW * 0.22, contentW * 0.22];
-            const svcHeaders = ['Serviço', 'Qtd', 'Valor Unit.', 'Valor Total'];
+            const svcCols = [contentW * 0.34, contentW * 0.16, contentW * 0.12, contentW * 0.18, contentW * 0.20];
+            const svcHeaders = ['Serviço', 'Preço Unit.', 'Qtd', 'Desconto', 'Total'];
             const svcRowH = 8;
 
             // Header
@@ -1491,20 +1591,26 @@
                 doc.line(margin, y + svcRowH, W - margin, y + svcRowH);
 
                 // Service name
-                setFont('normal', 8, TEXTO);
-                doc.text(sv.name, margin + 4, y + svcRowH / 2 + 1);
-
-                // Quantity
-                setFont('normal', 8, TEXTO);
-                doc.text(String(sv.qty), margin + svcCols[0] + svcCols[1] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+                setFont('normal', 7.5, TEXTO);
+                const nameLines = doc.splitTextToSize(sv.name, svcCols[0] - 8);
+                doc.text(nameLines[0], margin + 4, y + svcRowH / 2 + 1);
 
                 // Unit price
                 setFont('normal', 8, TEXTO);
-                doc.text(formatCurrency(sv.price), margin + svcCols[0] + svcCols[1] + svcCols[2] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+                doc.text(formatCurrency(sv.price), margin + svcCols[0] + svcCols[1] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+
+                // Quantity
+                setFont('normal', 8, TEXTO);
+                doc.text(String(sv.qty), margin + svcCols[0] + svcCols[1] + svcCols[2] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+
+                // Discount
+                const discountText = sv.isPackage ? 'Incluso' : formatCurrency(sv.discount);
+                setFont('normal', 7.5, sv.discount > 0 ? VERDE : TEXTO_SEC);
+                doc.text(discountText, margin + svcCols[0] + svcCols[1] + svcCols[2] + svcCols[3] / 2, y + svcRowH / 2 + 1, { align: 'center' });
 
                 // Total
                 setFont('bold', 8, VERDE);
-                doc.text(formatCurrency(sv.total), margin + svcCols[0] + svcCols[1] + svcCols[2] + svcCols[3] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+                doc.text(formatCurrency(sv.total), margin + svcCols[0] + svcCols[1] + svcCols[2] + svcCols[3] + svcCols[4] / 2, y + svcRowH / 2 + 1, { align: 'center' });
 
                 y += svcRowH;
             });
