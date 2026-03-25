@@ -3,1217 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Damas Clean - Gerador de Orçamento</title>
+    <title>Damas Clean - Gerador de Orçamento Premium</title>
     <meta name="description" content="Sistema de geração de orçamentos profissionais da Damas Clean - Higienização de Estofados">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <style>
-        /* ============================================
-           RESET & VARIABLES
-           ============================================ */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }   
         :root {
-            --azul-escuro: #1A3C5E;
-            --azul-medio: #2D6A9F;
-            --azul-claro: #D5E8F0;
-            --cinza-claro: #F4F6F9;
-            --verde: #1E6B3C;
-            --branco: #FFFFFF;
-            --texto: #2c3e50;
-            --texto-secundario: #6c7a89;
-            --sombra: 0 4px 24px rgba(26, 60, 94, 0.10);
-            --sombra-hover: 0 8px 32px rgba(26, 60, 94, 0.18);
-            --radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #0F172A; /* Azul Escuro Premium */
+            --primary-hover: #1E293B;
+            --brand: #2563EB; /* Azul Royal Marca */
+            --brand-light: #EFF6FF;
+            --success: #10B981;
+            --success-light: #ECFDF5;
+            --background: #F8FAFC;
+            --surface: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #e8f0fe 0%, var(--cinza-claro) 50%, #dce6f0 100%);
-            color: var(--texto);
-            min-height: 100vh;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-y: scroll;
         }
 
-        /* ============================================
-           HEADER
-           ============================================ */
-        .header {
-            background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-medio) 100%);
-            padding: 20px 0;
-            color: var(--branco);
-            box-shadow: 0 4px 20px rgba(26, 60, 94, 0.3);
+        /* HEADER */
+        .app-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 50;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
         }
-
-        .header-content {
-            max-width: 900px;
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-logo {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+        .brand-text h1 { font-size: 1.125rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; }
+        .brand-text p { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .status-badge {
+            background: #FEF3C7; color: #92400E;
+            padding: 4px 10px; border-radius: 999px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        
+        /* LAYOUT */
+        .app-container {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 24px;
             display: flex;
-            align-items: center;
-            gap: 16px;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        .header-logo {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--branco);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        /* TOP CARDS */
+        .top-cards {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 20px;
+        }
+        
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
         }
-
-        .header-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .header-info h1 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-
-        .header-info p {
-            font-size: 0.82rem;
-            opacity: 0.85;
-            font-weight: 300;
-        }
-
-        /* ============================================
-           MAIN CONTAINER
-           ============================================ */
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 24px 20px 40px;
-        }
-
-        /* ============================================
-           SECTIONS / CARDS
-           ============================================ */
-        .section {
-            background: var(--branco);
-            border-radius: var(--radius);
-            padding: 28px;
-            margin-bottom: 20px;
-            box-shadow: var(--sombra);
-            transition: var(--transition);
-            border: 1px solid rgba(26, 60, 94, 0.06);
-        }
-
-        .section:hover {
-            box-shadow: var(--sombra-hover);
-        }
-
-        .section-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--azul-escuro);
-            margin-bottom: 20px;
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 600;
+            color: var(--primary);
+            background: #FAFAFA;
+        }
+        .card-header .icon {
+            font-size: 1.1rem;
+        }
+        .card-body {
+            padding: 20px;
         }
 
-        .section-title .icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--azul-claro), #c0ddf0);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-
-        /* ============================================
-           FORM GRID
-           ============================================ */
+        /* GRID FOR FORM */
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
         }
-
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            display: flex; flex-direction: column; gap: 6px;
         }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
+        .form-group.col-span-2 { grid-column: span 2; }
         .form-group label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--texto-secundario);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
         }
-
-        .form-group input {
-            padding: 12px 14px;
-            border: 2px solid #e2e8f0;
+        .form-control {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-family: inherit;
+            color: var(--text-main);
             transition: var(--transition);
-            background: var(--cinza-claro);
-            color: var(--texto);
+            background: var(--surface);
+        }
+        .form-control:focus {
+            outline: none; border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .form-control[readonly] { background: var(--background); color: var(--text-muted); cursor: default; }
+
+        /* SPLIT SCREEN */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            align-items: start;
         }
 
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--azul-medio);
-            background: var(--branco);
-            box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.12);
-        }
-
-        .form-group input[readonly] {
-            background: #edf2f7;
-            color: var(--texto-secundario);
-            cursor: default;
-        }
-
-        /* ============================================
-           SERVICES TABLE
-           ============================================ */
-        .services-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            border-radius: 10px;
+        /* CATALOG PANEL */
+        .catalog-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        .services-table thead th {
-            background: var(--azul-escuro);
-            color: var(--branco);
-            padding: 14px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            text-align: left;
-        }
-
-        .services-table thead th:first-child {
-            width: 40px;
-            text-align: center;
-        }
-
-        .services-table thead th:nth-child(3),
-        .services-table thead th:nth-child(4),
-        .services-table thead th:nth-child(5),
-        .services-table thead th:nth-child(6) {
-            text-align: center;
-        }
-
-        .services-table tbody tr {
-            transition: var(--transition);
-        }
-
-        .services-table tbody tr:nth-child(even) {
-            background: var(--cinza-claro);
-        }
-
-        .services-table tbody tr:nth-child(odd) {
-            background: var(--branco);
-        }
-
-        .services-table tbody tr:hover {
-            background: var(--azul-claro);
-        }
-
-        .services-table tbody tr.selected {
-            background: rgba(30, 107, 60, 0.06);
-        }
-
-        .services-table tbody td {
-            padding: 12px 16px;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #edf2f7;
-            vertical-align: middle;
-        }
-
-        .services-table tbody td:first-child {
-            text-align: center;
-        }
-
-        .services-table tbody td:nth-child(3),
-        .services-table tbody td:nth-child(4),
-        .services-table tbody td:nth-child(5),
-        .services-table tbody td:nth-child(6) {
-            text-align: center;
-        }
-
-        .services-table .service-name {
-            font-weight: 500;
-        }
-
-        .services-table .service-price {
-            font-weight: 600;
-            color: var(--azul-escuro);
-            white-space: nowrap;
-        }
-
-        .services-table .service-total {
-            font-weight: 700;
-            color: var(--verde);
-            white-space: nowrap;
-        }
-
-        /* Custom checkbox */
-        .custom-checkbox {
-            position: relative;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-        }
-
-        .custom-checkbox input {
-            opacity: 0;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        .custom-checkbox .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 22px;
-            height: 22px;
-            background: var(--cinza-claro);
-            border: 2px solid #cbd5e0;
-            border-radius: 5px;
-            transition: var(--transition);
-        }
-
-        .custom-checkbox input:checked + .checkmark {
-            background: var(--verde);
-            border-color: var(--verde);
-        }
-
-        .custom-checkbox input:checked + .checkmark::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 6px;
-            width: 6px;
-            height: 10px;
-            border: solid var(--branco);
-            border-width: 0 2.5px 2.5px 0;
-            transform: rotate(45deg);
-        }
-
-        /* Quantity input */
-        .qty-input {
-            width: 56px;
-            padding: 6px 4px;
-            text-align: center;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-family: inherit;
-            font-weight: 600;
-            color: var(--azul-escuro);
-            background: var(--branco);
-            transition: var(--transition);
-        }
-
-        .qty-input:focus {
-            outline: none;
-            border-color: var(--azul-medio);
-            box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.12);
-        }
-
-        /* ============================================
-           SUMMARY BOX
-           ============================================ */
-        .summary-box {
-            background: var(--cinza-claro);
-            border-radius: 10px;
-            padding: 20px 24px;
-            margin-top: 20px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            font-size: 0.95rem;
-        }
-
-        .summary-row:not(:last-child) {
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .summary-row .label {
-            color: var(--texto-secundario);
-            font-weight: 500;
-        }
-
-        .summary-row .value {
-            font-weight: 700;
-            color: var(--azul-escuro);
-            font-size: 1.05rem;
-        }
-
-        .summary-row.discount .label {
-            color: var(--verde);
-        }
-
-        .summary-row.discount .value {
-            color: var(--verde);
-        }
-
-        .summary-row.installment .label {
-            color: var(--azul-medio);
-        }
-
-        .summary-row.installment .value {
-            color: var(--azul-medio);
-        }
-
-        .summary-total {
-            background: var(--azul-escuro);
-            color: var(--branco);
-            border-radius: 8px;
-            padding: 16px 20px;
-            margin-top: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .summary-total .label {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .summary-total .value {
-            font-size: 1.4rem;
-            font-weight: 800;
-        }
-
-        /* ============================================
-           BUTTONS
-           ============================================ */
-        .actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 24px;
-        }
-
-        .btn {
-            flex: 1;
-            min-width: 160px;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--verde), #237a46);
-            color: var(--branco);
-            box-shadow: 0 4px 16px rgba(30, 107, 60, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(30, 107, 60, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--azul-medio), var(--azul-escuro));
-            color: var(--branco);
-            box-shadow: 0 4px 16px rgba(45, 106, 159, 0.3);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(45, 106, 159, 0.4);
-        }
-
-        .btn-secondary:active {
-            transform: translateY(0);
-        }
-
-        .btn-outline {
-            background: var(--branco);
-            color: var(--azul-escuro);
-            border: 2px solid #d0d8e0;
-        }
-
-        .btn-outline:hover {
-            border-color: var(--azul-medio);
-            background: var(--cinza-claro);
-            transform: translateY(-2px);
-        }
-
-        .btn-outline:active {
-            transform: translateY(0);
-        }
-
-        /* ============================================
-           PREVIEW MODAL
-           ============================================ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(26, 60, 94, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--branco);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 680px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s ease;
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: var(--branco);
-            border-radius: 16px 16px 0 0;
-            z-index: 10;
-        }
-
-        .modal-header h2 {
-            font-size: 1.1rem;
-            color: var(--azul-escuro);
-        }
-
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: var(--cinza-claro);
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            color: var(--texto-secundario);
-        }
-
-        .modal-close:hover {
-            background: #e2e8f0;
-            color: var(--texto);
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-footer {
-            padding: 16px 24px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        /* ============================================
-           PREVIEW STYLES
-           ============================================ */
-        .preview-container {
-            background: var(--branco);
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 30px 25px;
-            font-size: 0.82rem;
-            line-height: 1.5;
-        }
-
-        .preview-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--azul-claro);
-        }
-
-        .preview-header .company-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--azul-escuro);
-            margin-bottom: 4px;
-        }
-
-        .preview-header .company-contact {
-            font-size: 0.75rem;
-            color: var(--texto-secundario);
-        }
-
-        .preview-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 16px;
-            font-size: 0.78rem;
-        }
-
-        .preview-table th {
-            background: var(--azul-escuro);
-            color: var(--branco);
-            padding: 8px 10px;
-            font-weight: 600;
-            text-align: left;
-            font-size: 0.74rem;
-        }
-
-        .preview-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #edf2f7;
-        }
-
-        .preview-table tr:nth-child(even) td {
-            background: var(--cinza-claro);
-        }
-
-        .preview-client-box {
-            background: var(--cinza-claro);
-            padding: 12px 14px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            font-size: 0.78rem;
-        }
-
-        .preview-client-box p {
-            margin-bottom: 3px;
-        }
-
-        .preview-client-box strong {
-            color: var(--azul-escuro);
-        }
-
-        .preview-summary {
-            text-align: right;
-            margin-bottom: 14px;
-        }
-
-        .preview-summary p {
-            margin-bottom: 3px;
-            font-size: 0.8rem;
-        }
-
-        .preview-total-box {
-            background: var(--azul-escuro);
-            color: var(--branco);
-            padding: 12px 16px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .preview-total-box .total-label {
-            font-weight: 600;
-        }
-
-        .preview-total-box .total-value {
-            font-size: 1.15rem;
-            font-weight: 800;
-        }
-
-        .preview-payment {
-            background: var(--cinza-claro);
-            padding: 10px 14px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 14px;
-            font-size: 0.72rem;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .preview-payment span {
-            padding: 4px 10px;
-            background: var(--branco);
-            border-radius: 4px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .preview-obs {
-            font-size: 0.7rem;
-            color: var(--texto-secundario);
-            margin-bottom: 14px;
-            padding: 10px;
-            border-left: 3px solid var(--azul-claro);
-            background: rgba(213, 232, 240, 0.2);
-            border-radius: 0 4px 4px 0;
-        }
-
-        .preview-footer {
-            text-align: center;
-            padding-top: 12px;
-            border-top: 2px solid var(--azul-claro);
-            font-size: 0.7rem;
-            color: var(--texto-secundario);
-        }
-
-        /* ============================================
-           TOAST NOTIFICATIONS
-           ============================================ */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--verde);
-            color: var(--branco);
-            padding: 14px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            z-index: 2000;
-            display: none;
-            animation: slideUp 0.3s ease;
-        }
-
-        .toast.error {
-            background: #c0392b;
-        }
-
-        .toast.show {
-            display: block;
-        }
-
-        /* ============================================
-           ANIMATIONS
-           ============================================ */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ============================================
-           RESPONSIVE
-           ============================================ */
-        @media (max-width: 680px) {
-            .header-content {
-                gap: 12px;
-            }
-
-            .header-logo {
-                width: 44px;
-                height: 44px;
-            }
-
-            .header-info h1 {
-                font-size: 1.05rem;
-            }
-
-            .container {
-                padding: 16px 12px 32px;
-            }
-
-            .section {
-                padding: 20px 16px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .services-table {
-                display: block;
-                overflow-x: auto;
-            }
-
-            .services-table thead th,
-            .services-table tbody td {
-                padding: 10px 10px;
-                font-size: 0.8rem;
-            }
-
-            .qty-input {
-                width: 46px;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                min-width: unset;
-            }
-
-            .summary-total .value {
-                font-size: 1.2rem;
-            }
-
-            .modal {
-                max-width: 100%;
-                max-height: 95vh;
-                border-radius: 12px;
-            }
-
-            .preview-payment {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .toast {
-                left: 16px;
-                right: 16px;
-                bottom: 16px;
-                text-align: center;
-            }
-        }
-
-        /* ============================================
-           SCROLLBAR
-           ============================================ */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--cinza-claro);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #b0c4d8;
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--azul-medio);
-        }
-
-        /* ============================================
-           SERVICE COUNTER BADGE
-           ============================================ */
-        .service-counter {
-            margin-left: auto;
-            background: var(--azul-claro);
-            color: var(--azul-escuro);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .service-counter.active {
-            background: var(--verde);
-            color: var(--branco);
-            animation: pulse 0.3s ease;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* ============================================
-           UPSELL BOX
-           ============================================ */
-        .upsell-box {
-            background: #FFF9C4;
-            border-left: 4px solid #e67e22;
-            border-radius: 0 10px 10px 0;
-            padding: 16px 20px;
-            margin-top: 16px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            transition: var(--transition);
-        }
-
-        .upsell-box:hover {
-            box-shadow: 0 4px 16px rgba(230, 126, 34, 0.15);
-        }
-
-        .upsell-icon {
-            font-size: 1.8rem;
-            flex-shrink: 0;
-        }
-
-        .upsell-content {
-            flex: 1;
-        }
-
-        .upsell-content strong {
-            font-size: 0.9rem;
-            color: #7f4c00;
-        }
-
-        .upsell-content p {
-            font-size: 0.8rem;
-            color: #5d4e37;
-            margin-top: 2px;
-        }
-
-        .upsell-price {
-            margin-top: 4px !important;
-            color: #e67e22 !important;
-        }
-
-        .upsell-action {
             display: flex;
             flex-direction: column;
+        }
+        
+        .catalog-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
         }
-
-        .upsell-label {
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: #7f4c00;
-        }
-
-        .upsell-toggle {
-            position: relative;
-            width: 48px;
-            height: 26px;
-            cursor: pointer;
-        }
-
-        .upsell-toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .upsell-slider {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #ccc;
-            border-radius: 26px;
+        .catalog-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+        .service-counter {
+            background: var(--brand-light); color: var(--brand);
+            padding: 4px 12px; border-radius: 999px;
+            font-size: 0.75rem; font-weight: 600;
             transition: var(--transition);
         }
+        .service-counter.active { background: var(--success); color: white; }
 
-        .upsell-slider::before {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            border-radius: 50%;
-            transition: var(--transition);
+        .search-wrap {
+            padding: 16px 20px;
+            background: #FAFAFA;
+            border-bottom: 1px solid var(--border);
         }
-
-        .upsell-toggle input:checked + .upsell-slider {
-            background: var(--verde);
-        }
-
-        .upsell-toggle input:checked + .upsell-slider::before {
-            transform: translateX(22px);
-        }
-
-        /* ============================================
-           OBSERVATIONS TEXTAREA
-           ============================================ */
-        .obs-textarea {
+        .search-input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 0.92rem;
-            font-family: inherit;
-            color: var(--texto);
-            background: var(--cinza-claro);
-            resize: vertical;
+            font-size: 0.95rem;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%2364748B" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>') no-repeat 14px center;
+            background-color: var(--surface);
             transition: var(--transition);
-            line-height: 1.5;
+        }
+        .search-input:focus {
+            outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .obs-textarea:focus {
-            outline: none;
-            border-color: var(--azul-medio);
-            background: var(--branco);
-            box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.12);
+        .services-list {
+            padding: 12px 20px 24px;
+            min-height: 400px;
         }
-
-        /* ============================================
-           WHATSAPP BUTTON
-           ============================================ */
-        .btn-whatsapp {
-            background: linear-gradient(135deg, #25d366, #128c7e);
-            color: var(--branco);
-            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+        
+        /* CATEGORY ACCORDION */
+        .category-group {
+            margin-top: 16px;
         }
-
-        .btn-whatsapp:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(37, 211, 102, 0.4);
-        }
-
-        .btn-whatsapp:active {
-            transform: translateY(0);
-        }
-
-        /* ============================================
-           SUMMARY TOTAL DETAILS
-           ============================================ */
-        .summary-total-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .summary-total-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .pix-highlight {
-            color: #a8e6cf;
-            font-size: 0.82rem;
+        .category-title {
+            font-size: 0.85rem;
             font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .category-subtitle { font-size: 0.7rem; font-weight: 400; text-transform: none; background:#FEF3C7; color:#92400E; padding: 2px 6px; border-radius: 4px;}
 
-        .installment-highlight {
-            color: var(--azul-claro);
-            font-size: 0.82rem;
-            font-weight: 600;
+        /* SERVICE CARD */
+        .service-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+        .service-card:hover { border-color: #CBD5E1; box-shadow: var(--shadow-sm); }
+        .service-card.selected { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); background: #F8FAFC; }
+        
+        .svc-info { flex: 1; }
+        .svc-name { font-weight: 600; font-size: 0.95rem; color: var(--primary); }
+        .svc-price { font-weight: 700; color: var(--brand); font-size: 0.85rem; margin-top: 4px; }
+        .svc-package-tag { font-size: 0.7rem; color: var(--success); font-weight: 600; background: var(--success-light); padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
+
+        .svc-controls {
+            display: flex; align-items: center; gap: 16px;
+        }
+        
+        /* Stepper */
+        .stepper {
+            display: inline-flex;
+            align-items: center;
+            background: var(--background);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .stepper button {
+            background: transparent; border: none; width: 32px; height: 32px;
+            font-size: 1.1rem; color: var(--text-muted); cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .stepper button:hover { background: var(--border); color: var(--primary); }
+        .stepper input {
+            width: 36px; height: 32px; border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+            text-align: center; font-weight: 600; font-family: inherit; font-size: 0.95rem; color: var(--primary); background: transparent;
+        }
+        .stepper input:focus { outline: none; }
+
+        .svc-total {
+            font-weight: 700; width: 85px; text-align: right; color: var(--text-main); font-size: 0.95rem;
+        }
+        .svc-total.active { color: var(--success); }
+        
+        .svc-discount-wrap {
+            display: flex; align-items: center; gap: 6px; margin-top: 6px; background: #fff; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); width: fit-content;
+        }
+        .svc-discount-wrap label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
+        .svc-discount-wrap input { width: 50px; border: none; font-size: 0.8rem; font-weight: 600; color: var(--primary); outline: none; text-align: right; }
+
+        /* UPSELL */
+        .upsell-box {
+            margin: 0 20px 20px;
+            background: linear-gradient(to right, #FFFBEB, #FEF3C7);
+            border: 1px solid #FDE68A;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .upsell-icon { font-size: 2rem; }
+        .upsell-content { flex: 1; }
+        .upsell-content h4 { color: #92400E; font-size: 0.95rem; font-weight: 700; margin-bottom: 2px;}
+        .upsell-content p { color: #B45309; font-size: 0.8rem; }
+        .upsell-price { color: #D97706; font-weight: 700; font-size: 0.85rem; margin-top: 4px; display: inline-block; }
+        
+        .toggle-switch {
+            position: relative; width: 44px; height: 24px; cursor: pointer; display: inline-block;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; top:0; left:0; right:0; bottom:0; background: #D1D5DB; border-radius: 24px; transition: .3s;
+        }
+        .toggle-slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background: #F59E0B; }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+        /* SUMMARY STICKY */
+        .summary-panel {
+            position: sticky;
+            top: 24px;
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .summary-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        .summary-header {
+            padding: 16px 20px;
+            background: var(--primary);
+            color: white;
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .summary-header h3 { font-size: 1.1rem; font-weight: 600; }
+        .mini-client { font-size: 0.8rem; color: #CBD5E1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .summary-items {
+            padding: 16px 20px;
+            max-height: 250px;
+            overflow-y: auto;
+            border-bottom: 1px dashed var(--border);
+        }
+        .empty-state { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0; font-style: italic; }
+        .summary-item {
+            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-size: 0.85rem;
+        }
+        .summary-item:last-child { margin-bottom: 0; }
+        .summary-item .name { font-weight: 500; color: var(--text-main); flex: 1; padding-right: 10px; line-height: 1.3; }
+        .summary-item .val { font-weight: 600; color: var(--text-main); white-space: nowrap; }
+
+        .summary-totals {
+            padding: 16px 20px;
+            background: #FAFAFA;
+        }
+        .sum-row {
+            display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px; color: var(--text-muted);
+        }
+        .sum-row .val { color: var(--text-main); font-weight: 600; }
+        .sum-row.upsell-totalRow { color: #D97706; }
+        .sum-row.upsell-totalRow .val { color: #D97706; }
+
+        .total-final-box {
+            background: var(--surface);
+            border: 1px solid var(--brand);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+        .total-label { font-size: 0.75rem; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; }
+        .total-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 4px 0 8px; line-height: 1; }
+        .total-details {
+            display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; background: var(--brand-light); padding: 8px; border-radius: 6px;
+        }
+        .details-pix { color: var(--success); font-weight: 700; }
+        .details-inst { color: var(--brand); font-weight: 600; }
+
+        /* OBS */
+        .obs-wrap { padding: 16px 20px; border-top: 1px solid var(--border); }
+        .obs-wrap label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; display: block; }
+        .obs-textarea {
+            width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem; font-family: inherit; resize: vertical; min-height: 60px; background: var(--background);
+        }
+        .obs-textarea:focus { outline: none; border-color: var(--brand); background: var(--surface); }
+
+        /* ACTIONS */
+        .actions-wrap { padding: 0 20px 20px; display: grid; gap: 10px; }
+        .btn {
+            width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; font-family: inherit; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--background); border-color: #CBD5E1; }
+
+        /* QUICK ACTIONS ROW */
+        .quick-actions {
+            display: flex; gap: 10px; padding: 0 20px 16px;
+        }
+        .btn-sm { flex: 1; padding: 10px; font-size: 0.8rem; }
+
+        /* MOBILE BOTTOM BAR */
+        .mobile-bottom-bar {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 16px; z-index: 100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); align-items: center; justify-content: space-between;
+        }
+        .mobile-total .lbl { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .mobile-total .val { font-size: 1.25rem; font-weight: 800; color: var(--primary); line-height: 1; }
+        .btn-mobile-sheet { background: var(--primary); color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; border: none; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+        .modal {
+            background: var(--surface); border-radius: var(--radius-lg); width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--surface); z-index: 10; }
+        .modal-header h2 { font-size: 1.1rem; color: var(--primary); }
+        .modal-close { background: var(--background); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;}
+        .modal-close:hover { background: var(--border); }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; }
+
+        /* PREVIEW CONTENT REUSE */
+        .preview-container { font-size: 0.85rem; }
+        .preview-header { text-align: center; border-bottom: 2px solid var(--brand-light); padding-bottom: 16px; margin-bottom: 16px;}
+        .preview-header .company-name { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+        .preview-client-box { background: var(--background); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;}
+        .preview-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        .preview-table th { background: var(--primary); color: white; padding: 8px 12px; font-weight: 600; text-align: left; font-size: 0.8rem;}
+        .preview-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+        .preview-total-box { background: var(--primary); color: white; padding: 12px 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;}
+        .preview-total-box .total-value { font-size: 1.25rem; font-weight: 800; }
+        .preview-obs { font-size: 0.75rem; color: var(--text-muted); background: var(--brand-light); padding: 12px; border-left: 3px solid var(--brand); border-radius: 0 6px 6px 0; }
+
+        /* TOAST */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 500; font-size: 0.9rem; box-shadow: var(--shadow-lg); z-index: 2000; display: none;
+        }
+        .toast.error { background: #DC2626; }
+        .toast.show { display: block; animation: slideUp 0.3s; }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .split-layout { grid-template-columns: 1fr; }
+            .top-cards { grid-template-columns: 1fr; }
+            .summary-panel { position: static; }
+            body { padding-bottom: 80px; }
+            .mobile-bottom-bar { display: flex; }
+        }
+        @media (max-width: 640px) {
+            .app-container { padding: 16px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .svc-controls { flex-direction: column; align-items: flex-end; gap: 8px;}
+            .svc-total { text-align: right; }
         }
     </style>
 </head>
 <body>
 
     <!-- HEADER -->
-    <header class="header">
-        <div class="header-content">
-            <div class="header-logo">
-                <img src="assents/Damas.png" alt="Damas Clean Logo" onerror="this.parentElement.innerHTML='🧹'">
-            </div>
-            <div class="header-info">
+    <header class="app-header">
+        <div class="brand-section">
+            <img src="assents/Damas.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+            <div class="brand-text">
                 <h1>Damas Clean</h1>
-                <p>Gerador de Orçamento Profissional</p>
+                <p>Gerador de Orçamentos</p>
             </div>
+        </div>
+        <div class="header-actions">
+            <span class="status-badge">Rascunho</span>
+            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; width: auto;" onclick="gerarPDF()" id="btnGerarPDFTop">📥 Gerar PDF</button>
         </div>
     </header>
 
-    <!-- MAIN -->
-    <main class="container">
+    <main class="app-container">
 
-        <!-- DADOS DO ORÇAMENTO -->
-        <div class="section" id="sectionDados">
-            <div class="section-title">
-                <span class="icon">📋</span>
-                Dados do Orçamento
+        <!-- TOP CARDS -->
+        <div class="top-cards">
+            <!-- Orçamento -->
+            <div class="card">
+                <div class="card-header"><span class="icon">📋</span> Dados do Orçamento</div>
+                <div class="card-body form-grid">
+                    <div class="form-group">
+                        <label>Nº do Orçamento</label>
+                        <input type="text" id="numOrcamento" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Emissão</label>
+                        <input type="text" id="dataEmissao" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Validade</label>
+                        <input type="text" id="dataValidade" class="form-control" readonly>
+                    </div>
+                </div>
             </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="numOrcamento">Nº do Orçamento</label>
-                    <input type="text" id="numOrcamento" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="dataEmissao">Data de Emissão</label>
-                    <input type="text" id="dataEmissao" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="dataValidade">Data de Validade</label>
-                    <input type="text" id="dataValidade" readonly>
+
+            <!-- Cliente -->
+            <div class="card">
+                <div class="card-header"><span class="icon">👤</span> Dados do Cliente</div>
+                <div class="card-body form-grid">
+                    <div class="form-group col-span-2">
+                        <label>Nome Completo</label>
+                        <input type="text" id="nomeCliente" class="form-control" placeholder="Nome do cliente" onkeyup="document.getElementById('miniClientName').textContent = this.value || 'Cliente não informado'">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp</label>
+                        <input type="tel" id="telefoneCliente" class="form-control" placeholder="(31) 99999-9999">
+                    </div>
+                    <div class="form-group col-span-2">
+                        <label>Endereço</label>
+                        <input type="text" id="enderecoCliente" class="form-control" placeholder="Rua, nº - Complemento">
+                    </div>
+                    <div class="form-group">
+                        <label>Bairro</label>
+                        <input type="text" id="bairroCliente" class="form-control" placeholder="Bairro">
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- DADOS DO CLIENTE -->
-        <div class="section" id="sectionCliente">
-            <div class="section-title">
-                <span class="icon">👤</span>
-                Dados do Cliente
-            </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="nomeCliente">Nome Completo</label>
-                    <input type="text" id="nomeCliente" placeholder="Nome do cliente">
+        <!-- SPLIT LAYOUT -->
+        <div class="split-layout">
+            
+            <!-- LEFT: CATALOG -->
+            <div class="catalog-panel">
+                <div class="catalog-header">
+                    <h2>Catálogo de Serviços</h2>
+                    <span class="service-counter" id="serviceCounter">0 serviço(s)</span>
                 </div>
-                <div class="form-group">
-                    <label for="telefoneCliente">Telefone / WhatsApp</label>
-                    <input type="tel" id="telefoneCliente" placeholder="(31) 99999-9999">
+                
+                <div class="search-wrap">
+                    <input type="text" class="search-input" id="searchService" placeholder="Buscar estofado, colchão ou pacote..." onkeyup="filterServices()">
                 </div>
-                <div class="form-group">
-                    <label for="enderecoCliente">Endereço</label>
-                    <input type="text" id="enderecoCliente" placeholder="Rua, nº - Cidade">
-                </div>
-                <div class="form-group">
-                    <label for="bairroCliente">Bairro</label>
-                    <input type="text" id="bairroCliente" placeholder="Bairro">
-                </div>
-            </div>
-        </div>
 
-        <!-- TABELA DE SERVIÇOS -->
-        <div class="section" id="sectionServicos">
-            <div class="section-title">
-                <span class="icon">🛋️</span>
-                Serviços Disponíveis
-                <span class="service-counter" id="serviceCounter">0 serviço(s) selecionado(s)</span>
-            </div>
-            <table class="services-table" id="servicesTable">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Serviço</th>
-                        <th>Preço Unit.</th>
-                        <th>Qtd</th>
-                        <th>Desconto</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody id="servicesBody">
-                    <!-- Populated by JS -->
-                </tbody>
-            </table>
-
-            <!-- UPSELL IMPERMEABILIZAÇÃO -->
-            <div class="upsell-box" id="upsellBox">
-                <div class="upsell-icon">💡</div>
-                <div class="upsell-content">
-                    <strong>ADICIONE IMPERMEABILIZAÇÃO</strong>
-                    <p>Protege contra líquidos e manchas por até 12 meses</p>
-                    <p class="upsell-price">Por peça: <strong>+ R$ 80,00</strong></p>
+                <div class="services-list" id="servicesBody">
+                    <!-- Gerado por JS -->
                 </div>
-                <div class="upsell-action">
-                    <label class="upsell-toggle">
-                        <input type="checkbox" id="upsellCheck" onchange="onUpsellChange()">
-                        <span class="upsell-slider"></span>
-                    </label>
-                    <span class="upsell-label" id="upsellLabel">Adicionar</span>
+
+                <div class="upsell-box" id="upsellBox">
+                    <div class="upsell-icon">🛡️</div>
+                    <div class="upsell-content">
+                        <h4>Proteção Extra: Impermeabilização</h4>
+                        <p>Aumente o ticket do orçamento oferecendo proteção contra manchas e líquidos.</p>
+                        <span class="upsell-price">Por peça: + R$ 80,00</span>
+                    </div>
+                    <div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="upsellCheck" onchange="onUpsellChange()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
-            <!-- RESUMO -->
-            <div class="summary-box">
-                <div class="summary-row">
-                    <span class="label">Subtotal</span>
-                    <span class="value" id="subtotal">R$ 0,00</span>
-                </div>
-                <div class="summary-row" id="upsellRow" style="display:none;">
-                    <span class="label" style="color:#e67e22;">💡 Impermeabilização</span>
-                    <span class="value" id="upsellTotal" style="color:#e67e22;">+ R$ 0,00</span>
-                </div>
-                <div class="summary-row discount">
-                    <span class="label">💰 PIX à vista (5% desc.)</span>
-                    <span class="value" id="descontoPix">R$ 0,00</span>
-                </div>
-                <div class="summary-row installment">
-                    <span class="label">💳 Parcelamento 4x s/ juros</span>
-                    <span class="value" id="parcela4x">4x R$ 0,00</span>
-                </div>
-            </div>
-            <div class="summary-total">
-                <div class="summary-total-main">
-                    <span class="label">Total a Pagar</span>
-                    <span class="value" id="totalFinal">R$ 0,00</span>
-                </div>
-                <div class="summary-total-details">
-                    <span class="pix-highlight" id="pixHighlight">💰 PIX à vista: R$ 0,00</span>
-                    <span class="installment-highlight" id="installmentHighlight">💳 4x de R$ 0,00</span>
-                </div>
-            </div>
-        </div>
+            <!-- RIGHT: SUMMARY STICKY -->
+            <aside class="summary-panel" id="summarySidebar">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <h3>Resumo Final</h3>
+                        <div class="mini-client">👤 <span id="miniClientName">Cliente não informado</span></div>
+                    </div>
+                    
+                    <div class="summary-items" id="summaryItemsList">
+                        <div class="empty-state">Nenhum serviço selecionado no momento.</div>
+                    </div>
 
-        <!-- OBSERVAÇÕES -->
-        <div class="section" id="sectionObs">
-            <div class="section-title">
-                <span class="icon">📝</span>
-                Observações / Condições Especiais
-            </div>
-            <textarea id="observacoes" class="obs-textarea" rows="3" placeholder="Ex: Limpeza inclui tratamento anti-ácaro. Agendamento para sábado pela manhã..."></textarea>
-        </div>
+                    <div class="summary-totals">
+                        <div class="sum-row">
+                            <span>Subtotal</span>
+                            <span class="val" id="subtotal">R$ 0,00</span>
+                        </div>
+                        <div class="sum-row upsell-totalRow" id="upsellRow" style="display:none;">
+                            <span>💡 Impermeabilização</span>
+                            <span class="val" id="upsellTotal">+ R$ 0,00</span>
+                        </div>
 
-        <!-- BOTÕES -->
-        <div class="actions">
-            <button class="btn btn-primary" onclick="gerarPDF()" id="btnGerarPDF">
-                📥 Gerar PDF
-            </button>
-            <button class="btn btn-secondary" onclick="preVisualizar()" id="btnPreview">
-                👁️ Pré-visualizar
-            </button>
-            <button class="btn btn-whatsapp" onclick="copiarWhatsApp()" id="btnWhatsApp">
-                📋 Copiar WhatsApp
-            </button>
-            <button class="btn btn-outline" onclick="limparFormulario()" id="btnLimpar">
-                🗑️ Limpar Formulário
-            </button>
+                        <div class="total-final-box">
+                            <div class="total-label">Total do Orçamento</div>
+                            <div class="total-value" id="totalFinal">R$ 0,00</div>
+                            <div class="total-details">
+                                <span class="details-pix" id="pixHighlight">💰 PIX à vista: R$ 0,00</span>
+                                <span class="details-inst" id="installmentHighlight">💳 4x de R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="obs-wrap">
+                        <label><span style="font-size: 1rem; vertical-align:-2px;">📝</span> Observações Internas / Especial</label>
+                        <textarea id="observacoes" class="obs-textarea" placeholder="Inclui removedor de odores grátis..."></textarea>
+                    </div>
+
+                    <!-- Hidden inputs for compatibility -->
+                    <span id="descontoPix" style="display:none"></span>
+                    <span id="parcela4x" style="display:none"></span>
+                    <span id="upsellLabel" style="display:none"></span>
+                    
+                    <div class="quick-actions">
+                        <button class="btn btn-outline btn-sm" onclick="preVisualizar()" id="btnPreview">👁️ Preview</button>
+                        <button class="btn btn-outline btn-sm" onclick="limparFormulario()" id="btnLimpar">🗑️ Limpar</button>
+                    </div>
+
+                    <div class="actions-wrap">
+                        <button class="btn btn-success" onclick="copiarWhatsApp()" id="btnWhatsApp">💬 Enviar via WhatsApp</button>
+                        <button class="btn btn-primary" onclick="gerarPDF()" id="btnGerarPDF">📥 Finalizar & Gerar PDF</button>
+                    </div>
+                </div>
+            </aside>
+
         </div>
     </main>
+
+    <!-- MOBILE STICKY BAR -->
+    <div class="mobile-bottom-bar">
+        <div class="mobile-total">
+            <div class="lbl">Total do Orçamento</div>
+            <div class="val" id="mobileTotal">R$ 0,00</div>
+        </div>
+        <button class="btn-mobile-sheet" onclick="scrollToSummary()">Ver Resumo 👆</button>
+    </div>
 
     <!-- MODAL DE PREVIEW -->
     <div class="modal-overlay" id="previewModal">
@@ -1222,12 +632,10 @@
                 <h2>Pré-visualização do Orçamento</h2>
                 <button class="modal-close" onclick="fecharPreview()">✕</button>
             </div>
-            <div class="modal-body" id="previewBody">
-                <!-- Preview content injected by JS -->
-            </div>
+            <div class="modal-body" id="previewBody"></div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="fecharPreview()" style="flex:0;">Fechar</button>
-                <button class="btn btn-primary" onclick="fecharPreview(); gerarPDF();" style="flex:0;">📥 Gerar PDF</button>
+                <button class="btn btn-outline" onclick="fecharPreview()" style="width:auto">Voltar</button>
+                <button class="btn btn-primary" onclick="fecharPreview(); gerarPDF();" style="width:auto">Gerar PDF</button>
             </div>
         </div>
     </div>
@@ -1238,13 +646,9 @@
     <img id="imgImpermeabilizacao" src="assents/impermeabilizacao.png" alt="" style="display:none;" crossorigin="anonymous">
     <img id="imgSofaLimpo" src="assents/sofa-limpo.png" alt="" style="display:none;" crossorigin="anonymous">
 
-    <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
-    <!-- ============================================
-         JAVASCRIPT
-         ============================================ -->
-    <script>
+<script>
         // ---- DATA & SERVICES ----
         const SERVICE_CATEGORIES = [
             {
@@ -1367,50 +771,90 @@
         }
 
         // ---- RENDER SERVICES TABLE ----
+        
+        // ---- RENDER SERVICES TABLE (NOVO MODELO SaaS) ----
         function renderServicesTable() {
-            const tbody = document.getElementById('servicesBody');
-            tbody.innerHTML = '';
+            const container = document.getElementById('servicesBody');
+            container.innerHTML = '';
 
             let globalIndex = 0;
             SERVICE_CATEGORIES.forEach(cat => {
-                // Category header row
-                const headerTr = document.createElement('tr');
-                headerTr.className = 'category-header';
-                headerTr.innerHTML = `<td colspan="6" style="background:linear-gradient(135deg,var(--azul-escuro),var(--azul-medio));color:#fff;font-weight:700;font-size:0.85rem;padding:10px 16px;letter-spacing:0.04em;">
-                    ${cat.category}${cat.subtitle ? ` <span style="font-weight:400;font-size:0.75rem;opacity:0.8;margin-left:8px;">— ${cat.subtitle}</span>` : ''}
-                </td>`;
-                tbody.appendChild(headerTr);
-
+                const group = document.createElement('div');
+                group.className = 'category-group';
+                group.innerHTML = `<div class="category-title">${cat.category} ${cat.subtitle ? `<span class="category-subtitle">${cat.subtitle}</span>` : ''}</div>`;
+                
                 cat.services.forEach(svc => {
                     const i = globalIndex;
-                    const tr = document.createElement('tr');
-                    tr.id = `serviceRow_${i}`;
+                    const card = document.createElement('div');
+                    card.className = 'service-card';
+                    card.id = `serviceRow_${i}`;
 
-                    const discountCell = svc.isPackage 
-                        ? `<td style="text-align:center;font-size:0.82rem;color:var(--verde);font-weight:600;">Incluso</td>`
-                        : `<td style="text-align:center;">
-                            <input type="number" class="qty-input" id="discount_${i}" value="0" min="0" step="5" style="width:72px;" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})" placeholder="R$ 0">
-                          </td>`;
+                    // Hidden checkbox compatibility
+                    const chk = `<input type="checkbox" id="check_${i}" onchange="onServiceChange(${i})" style="display:none">`;
+                    
+                    let discountHtml = '';
+                    if (!svc.isPackage) {
+                        discountHtml = `<div class="svc-discount-wrap"><label>Desc. R$</label><input type="number" id="discount_${i}" value="0" min="0" step="5" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})"></div>`;
+                    } else {
+                         // hidden discount to keep logic intact
+                         discountHtml = `<input type="hidden" id="discount_${i}" value="0">`;
+                    }
 
-                    tr.innerHTML = `
-                        <td>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" id="check_${i}" onchange="onServiceChange(${i})">
-                                <span class="checkmark"></span>
-                            </label>
-                        </td>
-                        <td class="service-name">${svc.name}</td>
-                        <td class="service-price">${formatCurrency(svc.price)}</td>
-                        <td>
-                            <input type="number" class="qty-input" id="qty_${i}" value="0" min="0" max="20" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})">
-                        </td>
-                        ${discountCell}
-                        <td class="service-total" id="total_${i}">R$ 0,00</td>
+                    const badge = svc.isPackage ? `<span class="svc-package-tag">Pacote</span>` : '';
+
+                    card.innerHTML = `
+                        ${chk}
+                        <div class="svc-info">
+                            <div class="svc-name">${svc.name} ${badge}</div>
+                            <div class="svc-price">${formatCurrency(svc.price)}</div>
+                            ${discountHtml}
+                        </div>
+                        <div class="svc-controls">
+                            <div class="stepper">
+                                <button onclick="changeQty(${i}, -1)">–</button>
+                                <input type="number" id="qty_${i}" value="0" min="0" max="20" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})">
+                                <button onclick="changeQty(${i}, 1)">+</button>
+                            </div>
+                            <div class="svc-total" id="total_${i}">R$ 0,00</div>
+                        </div>
                     `;
-                    tbody.appendChild(tr);
+                    group.appendChild(card);
                     globalIndex++;
                 });
+                container.appendChild(group);
             });
+        }
+
+        function changeQty(index, delta) {
+            const input = document.getElementById(`qty_${index}`);
+            let val = parseInt(input.value) || 0;
+            val += delta;
+            if (val < 0) val = 0;
+            if (val > 20) val = 20;
+            input.value = val;
+            onServiceChange(index);
+        }
+
+        function filterServices() {
+            const query = document.getElementById('searchService').value.toLowerCase();
+            const cards = document.querySelectorAll('.service-card');
+            cards.forEach(card => {
+                const text = card.querySelector('.svc-name').textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            // Hide empty categories
+            document.querySelectorAll('.category-group').forEach(group => {
+                const visible = Array.from(group.querySelectorAll('.service-card')).some(c => c.style.display !== 'none');
+                group.style.display = visible ? 'block' : 'none';
+            });
+        }
+
+        function scrollToSummary() {
+            document.getElementById('summarySidebar').scrollIntoView({ behavior: 'smooth' });
         }
 
         // ---- CALCULATIONS ----
@@ -1504,6 +948,25 @@
             document.getElementById('totalFinal').textContent = formatCurrency(totalComUpsell);
             document.getElementById('pixHighlight').textContent = `💰 PIX à vista: ${formatCurrency(totalComPix)}`;
             document.getElementById('installmentHighlight').textContent = `💳 4x de ${formatCurrency(parcela)}`;
+
+            // NOVO: Populate Summary Sidebar
+            const itemsList = document.getElementById('summaryItemsList');
+            const selectedList = getSelectedServices();
+            if(selectedList.length === 0) {
+                itemsList.innerHTML = '<div class="empty-state">Nenhum serviço selecionado no momento.</div>';
+            } else {
+                itemsList.innerHTML = selectedList.map(sv => `
+                    <div class="summary-item">
+                        <span class="name">${sv.qty}x ${sv.name}</span>
+                        <span class="val">${formatCurrency(sv.total)}</span>
+                    </div>
+                `).join('');
+            }
+            
+            // NOVO: Update Mobile Bottom Bar Total
+            const mobileTotalEl = document.getElementById('mobileTotal');
+            if(mobileTotalEl) mobileTotalEl.textContent = formatCurrency(totalComUpsell);
+
         }
 
         function getSelectedServices() {
