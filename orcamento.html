@@ -7,7 +7,7 @@
     <meta name="description" content="Sistema de geração de orçamentos profissionais da Damas Clean - Higienização de Estofados">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <style>
         /* ============================================
            RESET & VARIABLES
@@ -855,6 +855,201 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--azul-medio);
         }
+
+        /* ============================================
+           SERVICE COUNTER BADGE
+           ============================================ */
+        .service-counter {
+            margin-left: auto;
+            background: var(--azul-claro);
+            color: var(--azul-escuro);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .service-counter.active {
+            background: var(--verde);
+            color: var(--branco);
+            animation: pulse 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* ============================================
+           UPSELL BOX
+           ============================================ */
+        .upsell-box {
+            background: #FFF9C4;
+            border-left: 4px solid #e67e22;
+            border-radius: 0 10px 10px 0;
+            padding: 16px 20px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: var(--transition);
+        }
+
+        .upsell-box:hover {
+            box-shadow: 0 4px 16px rgba(230, 126, 34, 0.15);
+        }
+
+        .upsell-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .upsell-content {
+            flex: 1;
+        }
+
+        .upsell-content strong {
+            font-size: 0.9rem;
+            color: #7f4c00;
+        }
+
+        .upsell-content p {
+            font-size: 0.8rem;
+            color: #5d4e37;
+            margin-top: 2px;
+        }
+
+        .upsell-price {
+            margin-top: 4px !important;
+            color: #e67e22 !important;
+        }
+
+        .upsell-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .upsell-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #7f4c00;
+        }
+
+        .upsell-toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            cursor: pointer;
+        }
+
+        .upsell-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .upsell-slider {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #ccc;
+            border-radius: 26px;
+            transition: var(--transition);
+        }
+
+        .upsell-slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .upsell-toggle input:checked + .upsell-slider {
+            background: var(--verde);
+        }
+
+        .upsell-toggle input:checked + .upsell-slider::before {
+            transform: translateX(22px);
+        }
+
+        /* ============================================
+           OBSERVATIONS TEXTAREA
+           ============================================ */
+        .obs-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-family: inherit;
+            color: var(--texto);
+            background: var(--cinza-claro);
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+
+        .obs-textarea:focus {
+            outline: none;
+            border-color: var(--azul-medio);
+            background: var(--branco);
+            box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.12);
+        }
+
+        /* ============================================
+           WHATSAPP BUTTON
+           ============================================ */
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: var(--branco);
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-whatsapp:active {
+            transform: translateY(0);
+        }
+
+        /* ============================================
+           SUMMARY TOTAL DETAILS
+           ============================================ */
+        .summary-total-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-total-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .pix-highlight {
+            color: #a8e6cf;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .installment-highlight {
+            color: var(--azul-claro);
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -912,9 +1107,13 @@
                     <label for="telefoneCliente">Telefone / WhatsApp</label>
                     <input type="tel" id="telefoneCliente" placeholder="(31) 99999-9999">
                 </div>
-                <div class="form-group full-width">
-                    <label for="enderecoCliente">Endereço / Bairro</label>
-                    <input type="text" id="enderecoCliente" placeholder="Rua, nº, Bairro - Cidade">
+                <div class="form-group">
+                    <label for="enderecoCliente">Endereço</label>
+                    <input type="text" id="enderecoCliente" placeholder="Rua, nº - Cidade">
+                </div>
+                <div class="form-group">
+                    <label for="bairroCliente">Bairro</label>
+                    <input type="text" id="bairroCliente" placeholder="Bairro">
                 </div>
             </div>
         </div>
@@ -924,6 +1123,7 @@
             <div class="section-title">
                 <span class="icon">🛋️</span>
                 Serviços Disponíveis
+                <span class="service-counter" id="serviceCounter">0 serviço(s) selecionado(s)</span>
             </div>
             <table class="services-table" id="servicesTable">
                 <thead>
@@ -941,15 +1141,36 @@
                 </tbody>
             </table>
 
+            <!-- UPSELL IMPERMEABILIZAÇÃO -->
+            <div class="upsell-box" id="upsellBox">
+                <div class="upsell-icon">💡</div>
+                <div class="upsell-content">
+                    <strong>ADICIONE IMPERMEABILIZAÇÃO</strong>
+                    <p>Protege contra líquidos e manchas por até 12 meses</p>
+                    <p class="upsell-price">Por peça: <strong>+ R$ 80,00</strong></p>
+                </div>
+                <div class="upsell-action">
+                    <label class="upsell-toggle">
+                        <input type="checkbox" id="upsellCheck" onchange="onUpsellChange()">
+                        <span class="upsell-slider"></span>
+                    </label>
+                    <span class="upsell-label" id="upsellLabel">Adicionar</span>
+                </div>
+            </div>
+
             <!-- RESUMO -->
             <div class="summary-box">
                 <div class="summary-row">
                     <span class="label">Subtotal</span>
                     <span class="value" id="subtotal">R$ 0,00</span>
                 </div>
+                <div class="summary-row" id="upsellRow" style="display:none;">
+                    <span class="label" style="color:#e67e22;">💡 Impermeabilização</span>
+                    <span class="value" id="upsellTotal" style="color:#e67e22;">+ R$ 0,00</span>
+                </div>
                 <div class="summary-row discount">
-                    <span class="label">💰 Desconto PIX (5%)</span>
-                    <span class="value" id="descontoPix">− R$ 0,00</span>
+                    <span class="label">💰 PIX à vista (5% desc.)</span>
+                    <span class="value" id="descontoPix">R$ 0,00</span>
                 </div>
                 <div class="summary-row installment">
                     <span class="label">💳 Parcelamento 4x s/ juros</span>
@@ -957,9 +1178,24 @@
                 </div>
             </div>
             <div class="summary-total">
-                <span class="label">Total a Pagar</span>
-                <span class="value" id="totalFinal">R$ 0,00</span>
+                <div class="summary-total-main">
+                    <span class="label">Total a Pagar</span>
+                    <span class="value" id="totalFinal">R$ 0,00</span>
+                </div>
+                <div class="summary-total-details">
+                    <span class="pix-highlight" id="pixHighlight">💰 PIX à vista: R$ 0,00</span>
+                    <span class="installment-highlight" id="installmentHighlight">💳 4x de R$ 0,00</span>
+                </div>
             </div>
+        </div>
+
+        <!-- OBSERVAÇÕES -->
+        <div class="section" id="sectionObs">
+            <div class="section-title">
+                <span class="icon">📝</span>
+                Observações / Condições Especiais
+            </div>
+            <textarea id="observacoes" class="obs-textarea" rows="3" placeholder="Ex: Limpeza inclui tratamento anti-ácaro. Agendamento para sábado pela manhã..."></textarea>
         </div>
 
         <!-- BOTÕES -->
@@ -969,6 +1205,9 @@
             </button>
             <button class="btn btn-secondary" onclick="preVisualizar()" id="btnPreview">
                 👁️ Pré-visualizar
+            </button>
+            <button class="btn btn-whatsapp" onclick="copiarWhatsApp()" id="btnWhatsApp">
+                📋 Copiar WhatsApp
             </button>
             <button class="btn btn-outline" onclick="limparFormulario()" id="btnLimpar">
                 🗑️ Limpar Formulário
@@ -992,6 +1231,12 @@
             </div>
         </div>
     </div>
+
+    <!-- HIDDEN IMAGES FOR PDF -->
+    <img id="coverImage" src="assents/professional.png" alt="" style="display:none;" crossorigin="anonymous">
+    <img id="imgLimpezaPet" src="assents/limpeza-pet.png" alt="" style="display:none;" crossorigin="anonymous">
+    <img id="imgImpermeabilizacao" src="assents/impermeabilizacao.png" alt="" style="display:none;" crossorigin="anonymous">
+    <img id="imgSofaLimpo" src="assents/sofa-limpo.png" alt="" style="display:none;" crossorigin="anonymous">
 
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
@@ -1198,6 +1443,30 @@
             }
 
             updateSummary();
+            updateServiceCounter();
+        }
+
+        const UPSELL_PRICE = 80;
+
+        function getUpsellTotal() {
+            if (!document.getElementById('upsellCheck').checked) return 0;
+            const services = getSelectedServices();
+            const totalPieces = services.reduce((sum, sv) => sum + sv.qty, 0);
+            return totalPieces * UPSELL_PRICE;
+        }
+
+        function onUpsellChange() {
+            const checked = document.getElementById('upsellCheck').checked;
+            document.getElementById('upsellLabel').textContent = checked ? 'Adicionado ✓' : 'Adicionar';
+            updateSummary();
+        }
+
+        function updateServiceCounter() {
+            const selected = getSelectedServices();
+            const counter = document.getElementById('serviceCounter');
+            const count = selected.length;
+            counter.textContent = `${count} serviço(s) selecionado(s)`;
+            counter.className = 'service-counter' + (count > 0 ? ' active' : '');
         }
 
         function updateSummary() {
@@ -1213,14 +1482,28 @@
                 }
             });
 
-            const desconto = subtotal * PIX_DISCOUNT;
-            const totalComPix = subtotal - desconto;
-            const parcela = subtotal / INSTALLMENTS;
+            const upsellTotal = getUpsellTotal();
+            const totalComUpsell = subtotal + upsellTotal;
+            const desconto = totalComUpsell * PIX_DISCOUNT;
+            const totalComPix = totalComUpsell - desconto;
+            const parcela = totalComUpsell / INSTALLMENTS;
 
             document.getElementById('subtotal').textContent = formatCurrency(subtotal);
-            document.getElementById('descontoPix').textContent = `− ${formatCurrency(desconto)}`;
+
+            // Upsell row
+            const upsellRow = document.getElementById('upsellRow');
+            if (upsellTotal > 0) {
+                upsellRow.style.display = 'flex';
+                document.getElementById('upsellTotal').textContent = `+ ${formatCurrency(upsellTotal)}`;
+            } else {
+                upsellRow.style.display = 'none';
+            }
+
+            document.getElementById('descontoPix').textContent = formatCurrency(totalComPix);
             document.getElementById('parcela4x').textContent = `4x ${formatCurrency(parcela)}`;
-            document.getElementById('totalFinal').textContent = formatCurrency(subtotal);
+            document.getElementById('totalFinal').textContent = formatCurrency(totalComUpsell);
+            document.getElementById('pixHighlight').textContent = `💰 PIX à vista: ${formatCurrency(totalComPix)}`;
+            document.getElementById('installmentHighlight').textContent = `💳 4x de ${formatCurrency(parcela)}`;
         }
 
         function getSelectedServices() {
@@ -1282,6 +1565,10 @@
             document.getElementById('nomeCliente').value = '';
             document.getElementById('telefoneCliente').value = '';
             document.getElementById('enderecoCliente').value = '';
+            document.getElementById('bairroCliente').value = '';
+            document.getElementById('observacoes').value = '';
+            document.getElementById('upsellCheck').checked = false;
+            document.getElementById('upsellLabel').textContent = 'Adicionar';
 
             SERVICES.forEach((svc, i) => {
                 document.getElementById(`check_${i}`).checked = false;
@@ -1295,7 +1582,55 @@
             generateBudgetNumber();
             setDates();
             updateSummary();
+            updateServiceCounter();
             showToast('Formulário limpo com sucesso!');
+        }
+
+        // ---- WHATSAPP COPY ----
+        function copiarWhatsApp() {
+            if (!validate()) return;
+
+            const services = getSelectedServices();
+            const subtotal = services.reduce((s, sv) => s + sv.total, 0);
+            const upsellTotal = getUpsellTotal();
+            const totalGeral = subtotal + upsellTotal;
+            const totalPix = totalGeral - (totalGeral * PIX_DISCOUNT);
+            const parcela = totalGeral / INSTALLMENTS;
+
+            let msg = `Segue o orçamento conforme solicitado!\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `🛋️ SERVIÇOS\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━\n`;
+            
+            services.forEach(sv => {
+                const qtyStr = sv.qty > 1 ? ` (${sv.qty}x)` : '';
+                msg += `✅ ${sv.name}${qtyStr} → ${formatCurrency(sv.total)}\n`;
+            });
+            
+            if (upsellTotal > 0) {
+                msg += `✅ Impermeabilização → ${formatCurrency(upsellTotal)}\n`;
+            }
+
+            msg += `━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `💰 Total: ${formatCurrency(totalGeral)}\n`;
+            msg += `💳 Formas de pagamento: \n`;
+            msg += `🟢 PIX à vista → ${formatCurrency(totalPix)} (5% OFF)\n`;
+            msg += `💳 Cartão → 4x de ${formatCurrency(parcela)} sem juros\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `📅 Tenho horário disponível ainda essa semana no seu bairro! Qual horário fica melhor pra você?`;
+
+            navigator.clipboard.writeText(msg).then(() => {
+                showToast('✅ Mensagem copiada para o WhatsApp!');
+            }).catch(() => {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = msg;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('✅ Mensagem copiada para o WhatsApp!');
+            });
         }
 
         // ---- PREVIEW ----
@@ -1325,9 +1660,13 @@
         function buildPreviewHTML() {
             const services = getSelectedServices();
             const subtotal = services.reduce((s, sv) => s + sv.total, 0);
-            const desconto = subtotal * PIX_DISCOUNT;
-            const totalPix = subtotal - desconto;
-            const parcela = subtotal / INSTALLMENTS;
+            const upsellTotal = getUpsellTotal();
+            const totalGeral = subtotal + upsellTotal;
+            const desconto = totalGeral * PIX_DISCOUNT;
+            const totalPix = totalGeral - desconto;
+            const parcela = totalGeral / INSTALLMENTS;
+            const bairro = document.getElementById('bairroCliente').value;
+            const obs = document.getElementById('observacoes').value.trim();
 
             let serviceRows = '';
             services.forEach((sv, i) => {
@@ -1341,6 +1680,20 @@
                         <td style="text-align:center;color:#1E6B3C;font-weight:700">${formatCurrency(sv.total)}</td>
                     </tr>`;
             });
+
+            let upsellHtml = '';
+            if (upsellTotal > 0) {
+                upsellHtml = `<div style="background:#FFF9C4;border-left:4px solid #e67e22;padding:10px 14px;margin-bottom:12px;border-radius:0 6px 6px 0;">
+                    <strong style="color:#7f4c00;">💡 Impermeabilização:</strong> <span style="color:#e67e22;font-weight:700;">+ ${formatCurrency(upsellTotal)}</span>
+                </div>`;
+            }
+
+            let obsHtml = '';
+            if (obs) {
+                obsHtml = `<div style="background:#F4F6F9;padding:10px 14px;border-radius:6px;margin-bottom:12px;font-size:0.78rem;">
+                    <strong style="color:#1A3C5E;">Observações:</strong><br>${obs}
+                </div>`;
+            }
 
             return `
             <div class="preview-container">
@@ -1356,7 +1709,7 @@
                         <tr>
                             <th>Orçamento</th>
                             <th>Data</th>
-                            <th>Validade</th>
+                            <th style="color:#a8e6cf;font-weight:800;">Validade</th>
                             <th>Valor Total</th>
                         </tr>
                     </thead>
@@ -1364,8 +1717,8 @@
                         <tr>
                             <td>${document.getElementById('numOrcamento').value}</td>
                             <td>${document.getElementById('dataEmissao').value}</td>
-                            <td>${document.getElementById('dataValidade').value}</td>
-                            <td style="color:#2D6A9F;font-weight:800">${formatCurrency(subtotal)}</td>
+                            <td style="font-weight:700;color:#1A3C5E;">${document.getElementById('dataValidade').value}</td>
+                            <td style="color:#2D6A9F;font-weight:800">${formatCurrency(totalGeral)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1373,7 +1726,7 @@
                 <div class="preview-client-box">
                     <p><strong>Cliente:</strong> ${document.getElementById('nomeCliente').value}</p>
                     <p><strong>Telefone:</strong> ${document.getElementById('telefoneCliente').value || '—'}</p>
-                    <p><strong>Endereço:</strong> ${document.getElementById('enderecoCliente').value || '—'}</p>
+                    <p><strong>Endereço:</strong> ${document.getElementById('enderecoCliente').value || '—'}${bairro ? ' - ' + bairro : ''}</p>
                 </div>
 
                 <table class="preview-table">
@@ -1389,15 +1742,20 @@
                     <tbody>${serviceRows}</tbody>
                 </table>
 
+                ${upsellHtml}
+
                 <div class="preview-summary">
                     <p><strong>Subtotal:</strong> ${formatCurrency(subtotal)}</p>
-                    <p style="color:#1E6B3C"><strong>Desconto PIX (5%):</strong> − ${formatCurrency(desconto)}</p>
-                    <p style="color:#2D6A9F"><strong>4x sem juros:</strong> ${formatCurrency(parcela)}/parcela</p>
+                    ${upsellTotal > 0 ? `<p style="color:#e67e22"><strong>Impermeabilização:</strong> + ${formatCurrency(upsellTotal)}</p>` : ''}
                 </div>
 
                 <div class="preview-total-box">
                     <span class="total-label">Total a Pagar</span>
-                    <span class="total-value">${formatCurrency(subtotal)}</span>
+                    <span class="total-value">${formatCurrency(totalGeral)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;background:#1E6B3C;color:#fff;padding:8px 16px;border-radius:0 0 6px 6px;margin-top:-8px;margin-bottom:12px;font-size:0.82rem;font-weight:600;">
+                    <span>💰 PIX à vista: ${formatCurrency(totalPix)}</span>
+                    <span>💳 4x de ${formatCurrency(parcela)}</span>
                 </div>
 
                 <div class="preview-payment">
@@ -1406,6 +1764,8 @@
                     <span>💳 Débito</span>
                     <span>💳 Crédito 4x s/ juros</span>
                 </div>
+
+                ${obsHtml}
 
                 <div class="preview-obs">
                     Este orçamento tem validade de 7 dias. O agendamento será confirmado após contato via WhatsApp. Atendemos em domicílio em BH e região.
@@ -1419,280 +1779,348 @@
         }
 
         // ==================================================
-        //  PDF GENERATION WITH jsPDF
+        //  PDF GENERATION WITH pdf-lib (using exemplo.pdf as template)
         // ==================================================
-        function gerarPDF() {
+        async function gerarPDF() {
             if (!validate()) return;
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const W = 210;
-            const margin = 18;
-            const contentW = W - margin * 2;
-            let y = 18;
-
-            const AZUL_ESCURO  = [26, 60, 94];
-            const AZUL_MEDIO   = [45, 106, 159];
-            const AZUL_CLARO   = [213, 232, 240];
-            const CINZA_CLARO  = [244, 246, 249];
-            const VERDE        = [30, 107, 60];
-            const BRANCO       = [255, 255, 255];
-            const TEXTO        = [44, 62, 80];
-            const TEXTO_SEC    = [108, 122, 137];
-
-            const services = getSelectedServices();
-            const subtotal = services.reduce((s, sv) => s + sv.total, 0);
-            const desconto = subtotal * PIX_DISCOUNT;
-            const totalPix = subtotal - desconto;
-            const parcela  = subtotal / INSTALLMENTS;
-
-            // ---- HELPER FUNCTIONS ----
-            function setFont(style, size, color) {
-                doc.setFont('helvetica', style);
-                doc.setFontSize(size);
-                doc.setTextColor(...color);
-            }
-
-            function drawRect(x, yy, w, h, color, radius) {
-                doc.setFillColor(...color);
-                if (radius) {
-                    doc.roundedRect(x, yy, w, h, radius, radius, 'F');
-                } else {
-                    doc.rect(x, yy, w, h, 'F');
-                }
-            }
-
-            // ---- HEADER ----
-            // Logo circle placeholder
-            const logoSize = 14;
-            doc.setFillColor(...AZUL_CLARO);
-            doc.circle(margin + logoSize / 2, y + logoSize / 2, logoSize / 2, 'F');
-
-            // Try to load the logo image
             try {
-                const logoImg = document.querySelector('.header-logo img');
-                if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 200;
-                    canvas.height = 200;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(logoImg, 0, 0, 200, 200);
-                    const imgData = canvas.toDataURL('image/png');
-                    doc.addImage(imgData, 'PNG', margin, y, logoSize, logoSize);
-                }
-            } catch (e) { /* logo not available, circle stays */ }
+                // Show loading state
+                const btnPDF = document.getElementById('btnGerarPDF');
+                const originalText = btnPDF.innerHTML;
+                btnPDF.innerHTML = '⏳ Gerando PDF...';
+                btnPDF.disabled = true;
 
-            setFont('bold', 15, AZUL_ESCURO);
-            doc.text('Damas Clean', margin + logoSize + 5, y + 5);
-
-            setFont('normal', 9, AZUL_MEDIO);
-            doc.text('Higienização de Estofados', margin + logoSize + 5, y + 10);
-
-            setFont('normal', 7.5, TEXTO_SEC);
-            doc.text('WhatsApp: (31) 9971-0420  ·  Instagram: @damas_clean', margin + logoSize + 5, y + 14.5);
-
-            y += logoSize + 4;
-
-            // Separator line
-            doc.setDrawColor(...AZUL_CLARO);
-            doc.setLineWidth(0.8);
-            doc.line(margin, y, W - margin, y);
-            y += 6;
-
-            // ---- BUDGET INFO TABLE ----
-            const infoCols = [contentW * 0.28, contentW * 0.22, contentW * 0.22, contentW * 0.28];
-            const infoHeaders = ['Orçamento', 'Data', 'Validade', 'Valor Total'];
-            const infoValues = [
-                document.getElementById('numOrcamento').value,
-                document.getElementById('dataEmissao').value,
-                document.getElementById('dataValidade').value,
-                formatCurrency(subtotal)
-            ];
-            const rowH = 9;
-
-            // Header row
-            drawRect(margin, y, contentW, rowH, AZUL_ESCURO);
-            setFont('bold', 7.5, BRANCO);
-            let xPos = margin;
-            infoHeaders.forEach((h, i) => {
-                doc.text(h, xPos + infoCols[i] / 2, y + rowH / 2 + 1, { align: 'center' });
-                xPos += infoCols[i];
-            });
-            y += rowH;
-
-            // Data row
-            drawRect(margin, y, contentW, rowH, BRANCO);
-            doc.setDrawColor(220, 225, 230);
-            doc.setLineWidth(0.3);
-            doc.rect(margin, y, contentW, rowH, 'S');
-            setFont('normal', 8, TEXTO);
-            xPos = margin;
-            infoValues.forEach((v, i) => {
-                if (i === 3) {
-                    setFont('bold', 9, AZUL_MEDIO);
-                }
-                doc.text(v, xPos + infoCols[i] / 2, y + rowH / 2 + 1, { align: 'center' });
-                if (i === 3) setFont('normal', 8, TEXTO);
-                xPos += infoCols[i];
-            });
-            y += rowH + 6;
-
-            // ---- CLIENT BLOCK ----
-            const clientH = 22;
-            drawRect(margin, y, contentW, clientH, CINZA_CLARO, 3);
-            setFont('bold', 7.5, AZUL_ESCURO);
-            doc.text('Cliente:', margin + 6, y + 6);
-            doc.text('Telefone:', margin + 6, y + 12);
-            doc.text('Endereço:', margin + 6, y + 18);
-
-            setFont('normal', 8, TEXTO);
-            doc.text(document.getElementById('nomeCliente').value, margin + 28, y + 6);
-            doc.text(document.getElementById('telefoneCliente').value || '—', margin + 28, y + 12);
-
-            const endereco = document.getElementById('enderecoCliente').value || '—';
-            const enderecoLines = doc.splitTextToSize(endereco, contentW - 34);
-            doc.text(enderecoLines[0], margin + 30, y + 18);
-            y += clientH + 6;
-
-            // ---- SERVICES TABLE ----
-            const svcCols = [contentW * 0.34, contentW * 0.16, contentW * 0.12, contentW * 0.18, contentW * 0.20];
-            const svcHeaders = ['Serviço', 'Preço Unit.', 'Qtd', 'Desconto', 'Total'];
-            const svcRowH = 8;
-
-            // Header
-            drawRect(margin, y, contentW, svcRowH, AZUL_ESCURO);
-            setFont('bold', 7.5, BRANCO);
-            xPos = margin;
-            svcHeaders.forEach((h, i) => {
-                const align = i === 0 ? 'left' : 'center';
-                const tx = i === 0 ? xPos + 4 : xPos + svcCols[i] / 2;
-                doc.text(h, tx, y + svcRowH / 2 + 1, { align });
-                xPos += svcCols[i];
-            });
-            y += svcRowH;
-
-            // Rows
-            services.forEach((sv, idx) => {
-                const bg = idx % 2 === 0 ? BRANCO : CINZA_CLARO;
-                drawRect(margin, y, contentW, svcRowH, bg);
-
-                // Draw vertical lines
-                doc.setDrawColor(220, 225, 230);
-                doc.setLineWidth(0.2);
-                let lineX = margin;
-                svcCols.forEach((cw) => {
-                    lineX += cw;
-                    if (lineX < W - margin) {
-                        doc.line(lineX, y, lineX, y + svcRowH);
-                    }
+                // Fetch the template PDF
+                const templateUrl = 'exemplo.pdf';
+                const templateBytes = await fetch(templateUrl).then(res => {
+                    if (!res.ok) throw new Error('Não foi possível carregar o template PDF');
+                    return res.arrayBuffer();
                 });
 
-                // Bottom border
-                doc.line(margin, y + svcRowH, W - margin, y + svcRowH);
+                const { PDFDocument, rgb, StandardFonts } = PDFLib;
 
-                // Service name
-                setFont('normal', 7.5, TEXTO);
-                const nameLines = doc.splitTextToSize(sv.name, svcCols[0] - 8);
-                doc.text(nameLines[0], margin + 4, y + svcRowH / 2 + 1);
+                // Load the template
+                const pdfDoc = await PDFDocument.load(templateBytes);
 
-                // Unit price
-                setFont('normal', 8, TEXTO);
-                doc.text(formatCurrency(sv.price), margin + svcCols[0] + svcCols[1] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+                // Embed fonts
+                const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+                const helveticaOblique = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
+                const helveticaBoldOblique = await pdfDoc.embedFont(StandardFonts.HelveticaBoldOblique);
 
-                // Quantity
-                setFont('normal', 8, TEXTO);
-                doc.text(String(sv.qty), margin + svcCols[0] + svcCols[1] + svcCols[2] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+                // Get pages
+                const pages = pdfDoc.getPages();
 
-                // Discount
-                const discountText = sv.isPackage ? 'Incluso' : formatCurrency(sv.discount);
-                setFont('normal', 7.5, sv.discount > 0 ? VERDE : TEXTO_SEC);
-                doc.text(discountText, margin + svcCols[0] + svcCols[1] + svcCols[2] + svcCols[3] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+                // PAGE 1: Keep as-is (follow-up page), no changes needed
 
-                // Total
-                setFont('bold', 8, VERDE);
-                doc.text(formatCurrency(sv.total), margin + svcCols[0] + svcCols[1] + svcCols[2] + svcCols[3] + svcCols[4] / 2, y + svcRowH / 2 + 1, { align: 'center' });
+                // PAGE 2: Budget page - overlay dynamic data
+                const page2 = pages[1];
+                const { width, height } = page2.getSize();
 
-                y += svcRowH;
-            });
+                // Colors
+                const AZUL_ESCURO = rgb(26/255, 60/255, 94/255);
+                const BRANCO = rgb(1, 1, 1);
+                const PRETO = rgb(0, 0, 0);
 
-            y += 6;
+                // Get form data
+                const services = getSelectedServices();
+                const subtotal = services.reduce((s, sv) => s + sv.total, 0);
+                const upsellTotal = getUpsellTotal();
+                const totalGeral = subtotal + upsellTotal;
+                const desconto = totalGeral * PIX_DISCOUNT;
+                const totalPix = totalGeral - desconto;
+                const parcela = totalGeral / INSTALLMENTS;
 
-            // ---- SUMMARY ----
-            const summaryX = W - margin - 80;
+                const numOrc = document.getElementById('numOrcamento').value;
+                const dataEmissao = document.getElementById('dataEmissao').value;
+                const dataValidade = document.getElementById('dataValidade').value;
+                const nomeCliente = document.getElementById('nomeCliente').value;
+                const telefone = document.getElementById('telefoneCliente').value || '';
+                const endereco = document.getElementById('enderecoCliente').value || '';
+                const bairro = document.getElementById('bairroCliente').value || '';
+                const enderecoFull = endereco + (bairro ? ' - ' + bairro : '');
+                const obsCustom = document.getElementById('observacoes').value.trim();
 
-            setFont('normal', 8, TEXTO_SEC);
-            doc.text('Subtotal:', summaryX, y);
-            setFont('bold', 9, AZUL_ESCURO);
-            doc.text(formatCurrency(subtotal), W - margin, y, { align: 'right' });
-            y += 6;
+                // ========================================
+                // CLEAR lower page 2 (everything below blue header)
+                // ========================================
+                // Erase from bottom up to y=675
+                page2.drawRectangle({
+                    x: 0, y: 0, width: width, height: 675,
+                    color: BRANCO,
+                });
 
-            setFont('normal', 8, VERDE);
-            doc.text('Desconto PIX (5%):', summaryX, y);
-            setFont('bold', 8.5, VERDE);
-            doc.text(`− ${formatCurrency(desconto)}`, W - margin, y, { align: 'right' });
-            y += 6;
+                // Start Y coordinate for tables
+                let currentY = 630;
+                const marginX = 45;
+                const tableW = width - (marginX * 2); // 595 - 90 = 505
 
-            setFont('normal', 8, AZUL_MEDIO);
-            doc.text('Crédito 4x sem juros:', summaryX, y);
-            setFont('bold', 8.5, AZUL_MEDIO);
-            doc.text(`${formatCurrency(parcela)}/parcela`, W - margin, y, { align: 'right' });
-            y += 8;
+                // ---- TABLE 1: Info (Orçamento, Data, Validade, Valor) ----
+                const t1Row1H = 20; // Header row
+                const t1Row2H = 34; // Data row
+                page2.drawRectangle({
+                    x: marginX, y: currentY - t1Row1H, width: tableW, height: t1Row1H,
+                    borderColor: PRETO, borderWidth: 1
+                });
+                page2.drawRectangle({
+                    x: marginX, y: currentY - t1Row1H - t1Row2H, width: tableW, height: t1Row2H,
+                    borderColor: PRETO, borderWidth: 1
+                });
 
-            // Total box
-            const totalBoxH = 12;
-            drawRect(margin, y, contentW, totalBoxH, AZUL_ESCURO, 3);
-            setFont('bold', 10, BRANCO);
-            doc.text('Total a Pagar', margin + 8, y + totalBoxH / 2 + 1.5);
-            setFont('bold', 14, BRANCO);
-            doc.text(formatCurrency(subtotal), W - margin - 8, y + totalBoxH / 2 + 2, { align: 'right' });
-            y += totalBoxH + 8;
+                const colsT1 = [tableW * 0.22, tableW * 0.22, tableW * 0.22, tableW * 0.34];
+                let curX = marginX;
+                // Vertical lines
+                for (let i = 0; i < 3; i++) {
+                    curX += colsT1[i];
+                    page2.drawLine({
+                        start: { x: curX, y: currentY },
+                        end: { x: curX, y: currentY - t1Row1H - t1Row2H },
+                        color: PRETO, thickness: 1
+                    });
+                }
 
-            // ---- PAYMENT METHODS ----
-            const payH = 10;
-            drawRect(margin, y, contentW, payH, CINZA_CLARO, 3);
-            setFont('normal', 7, TEXTO_SEC);
-            const payments = ['💰 PIX (5% desc.)', '💵 Dinheiro', '💳 Débito', '💳 Crédito 4x s/ juros'];
-            // Since emojis may not render in PDF, use text-only versions
-            const payTexts = ['PIX (5% desc.)', 'Dinheiro', 'Débito', 'Crédito 4x s/ juros'];
-            const payW = contentW / payTexts.length;
-            payTexts.forEach((p, i) => {
-                const px = margin + payW * i + payW / 2;
-                doc.text(p, px, y + payH / 2 + 1, { align: 'center' });
-                if (i < payTexts.length - 1) {
-                    doc.setDrawColor(200, 205, 210);
-                    doc.setLineWidth(0.2);
-                    doc.line(margin + payW * (i + 1), y + 2, margin + payW * (i + 1), y + payH - 2);
+                // Header Texts
+                const headersT1 = ['Orçamento', 'Data', 'Validade', 'Valor'];
+                curX = marginX;
+                for (let i = 0; i < 4; i++) {
+                    const txt = headersT1[i];
+                    const txtW = helveticaBoldOblique.widthOfTextAtSize(txt, 10);
+                    page2.drawText(txt, {
+                        x: curX + (colsT1[i] / 2) - (txtW / 2),
+                        y: currentY - 14,
+                        size: 10, font: helveticaBoldOblique, color: PRETO
+                    });
+                    curX += colsT1[i];
+                }
+
+                // Data Texts
+                const dataY = currentY - t1Row1H - 18;
+                page2.drawText(numOrc, {
+                    x: marginX + (colsT1[0] / 2) - (helvetica.widthOfTextAtSize(numOrc, 10) / 2),
+                    y: dataY, size: 10, font: helvetica, color: PRETO
+                });
+                page2.drawText(dataEmissao, {
+                    x: marginX + colsT1[0] + (colsT1[1] / 2) - (helvetica.widthOfTextAtSize(dataEmissao, 10) / 2),
+                    y: dataY, size: 10, font: helvetica, color: PRETO
+                });
+                page2.drawText(dataValidade, {
+                    x: marginX + colsT1[0] + colsT1[1] + (colsT1[2] / 2) - (helvetica.widthOfTextAtSize(dataValidade, 10) / 2),
+                    y: dataY, size: 10, font: helvetica, color: PRETO
+                });
+                
+                // Valor (4x and a vista)
+                const v4x = `4x de ${formatCurrency(parcela)}`;
+                const vVista = `ou ${formatCurrency(totalPix)} à vista`;
+                const vXBase = marginX + colsT1[0] + colsT1[1] + colsT1[2] + (colsT1[3] / 2);
+                page2.drawText(v4x, {
+                    x: vXBase - (helveticaBoldOblique.widthOfTextAtSize(v4x, 12) / 2),
+                    y: dataY + 4, size: 12, font: helveticaBoldOblique, color: PRETO
+                });
+                page2.drawText(vVista, {
+                    x: vXBase - (helvetica.widthOfTextAtSize(vVista, 9) / 2),
+                    y: dataY - 8, size: 9, font: helvetica, color: PRETO
+                });
+
+                currentY -= (t1Row1H + t1Row2H + 15);
+
+                // ---- TABLE 2: Client Info ----
+                const clientBoxH = 50;
+                page2.drawRectangle({
+                    x: marginX, y: currentY - clientBoxH, width: tableW, height: clientBoxH,
+                    borderColor: PRETO, borderWidth: 1
+                });
+
+                const clientLabel = 'Cliente: ';
+                const clientLabelW = helveticaBoldOblique.widthOfTextAtSize(clientLabel, 10);
+                page2.drawText(clientLabel, { // Fix: use helveticaBoldOblique for italic label
+                    x: marginX + 5, y: currentY - 20, size: 10, font: helveticaBoldOblique, color: PRETO
+                });
+                page2.drawText(`${nomeCliente}${telefone ? '    ' + telefone : ''}`, {
+                    x: marginX + 5 + clientLabelW, y: currentY - 20, size: 10, font: helvetica, color: PRETO
+                });
+
+                const endLabel = 'Endereço: ';
+                const endLabelW = helveticaBoldOblique.widthOfTextAtSize(endLabel, 10);
+                page2.drawText(endLabel, { // Fix: use helveticaBoldOblique for italic label
+                    x: marginX + 5, y: currentY - 40, size: 10, font: helveticaBoldOblique, color: PRETO
+                });
+                page2.drawText(enderecoFull || '—', {
+                    x: marginX + 5 + endLabelW, y: currentY - 40, size: 10, font: helvetica, color: PRETO
+                });
+
+                currentY -= (clientBoxH + 15);
+
+                // ---- TABLE 3: Services ----
+                page2.drawText('Descrição do serviço', {
+                    x: marginX, y: currentY - 14, size: 11, font: helveticaBoldOblique, color: PRETO
+                });
+                currentY -= 20;
+
+                const t3HeaderH = 20;
+                const svcCols = [tableW * 0.40, tableW * 0.12, tableW * 0.24, tableW * 0.24];
+                
+                page2.drawRectangle({
+                    x: marginX, y: currentY - t3HeaderH, width: tableW, height: t3HeaderH,
+                    borderColor: PRETO, borderWidth: 1
+                });
+
+                // Vertical lines header
+                curX = marginX;
+                for(let i=0; i<3; i++) {
+                    curX += svcCols[i];
+                    page2.drawLine({
+                        start: {x: curX, y: currentY}, end: {x: curX, y: currentY - t3HeaderH}, color: PRETO, thickness: 1
+                    });
+                }
+
+                // Headers
+                const svcHeaders = ['Serviço', '', 'Valor unitário', 'Valor total'];
+                page2.drawText(svcHeaders[0], { x: marginX + 5, y: currentY - 14, size: 10, font: helveticaBoldOblique, color: PRETO });
+                // We don't draw text for qty header
+                page2.drawText(svcHeaders[2], { 
+                    x: marginX + svcCols[0] + svcCols[1] + (svcCols[2]/2) - (helveticaBoldOblique.widthOfTextAtSize(svcHeaders[2], 10)/2), 
+                    y: currentY - 14, size: 10, font: helveticaBoldOblique, color: PRETO 
+                });
+                page2.drawText(svcHeaders[3], { 
+                    x: marginX + svcCols[0] + svcCols[1] + svcCols[2] + (svcCols[3]/2) - (helveticaBoldOblique.widthOfTextAtSize(svcHeaders[3], 10)/2), 
+                    y: currentY - 14, size: 10, font: helveticaBoldOblique, color: PRETO 
+                });
+
+                currentY -= t3HeaderH;
+
+                // Service Rows
+                const allServices = [...services];
+                if (upsellTotal > 0) {
+                    allServices.push({ name: 'Impermeabilização (Adicional)', qty: '-', price: upsellTotal, total: upsellTotal });
+                }
+
+                allServices.forEach(sv => {
+                    const rowH = 34; // Generous height for potential 2 lines
+                    page2.drawRectangle({
+                        x: marginX, y: currentY - rowH, width: tableW, height: rowH,
+                        borderColor: PRETO, borderWidth: 1
+                    });
+                    
+                    // Vertical lines
+                    let cx = marginX;
+                    for(let i=0; i<3; i++) {
+                        cx += svcCols[i];
+                        page2.drawLine({
+                            start: {x: cx, y: currentY}, end: {x: cx, y: currentY - rowH}, color: PRETO, thickness: 1
+                        });
+                    }
+
+                    // Text
+                    const nameLines = splitText(sv.name, helvetica, 9, svcCols[0] - 10);
+                    let ny = currentY - 12;
+                    nameLines.forEach(line => {
+                        page2.drawText(line, { x: marginX + 5, y: ny, size: 9, font: helvetica, color: PRETO });
+                        ny -= 12;
+                    });
+
+                    page2.drawText(String(sv.qty), { 
+                        x: marginX + svcCols[0] + (svcCols[1]/2) - (helvetica.widthOfTextAtSize(String(sv.qty), 9)/2), 
+                        y: currentY - 20, size: 9, font: helvetica, color: PRETO 
+                    });
+
+                    const pStr = typeof sv.price === 'number' ? formatCurrency(sv.price) : sv.price;
+                    page2.drawText(pStr, { 
+                        x: marginX + svcCols[0] + svcCols[1] + (svcCols[2]/2) - (helvetica.widthOfTextAtSize(pStr, 9)/2), 
+                        y: currentY - 20, size: 9, font: helvetica, color: PRETO 
+                    });
+
+                    const tStr = formatCurrency(sv.total);
+                    page2.drawText(tStr, { 
+                        x: marginX + svcCols[0] + svcCols[1] + svcCols[2] + (svcCols[3]/2) - (helvetica.widthOfTextAtSize(tStr, 9)/2), 
+                        y: currentY - 20, size: 9, font: helvetica, color: PRETO 
+                    });
+
+                    currentY -= rowH;
+                });
+
+                currentY -= 15;
+
+                // ---- TABLE 4: Resumo ----
+                page2.drawText('Resumo do investimento', {
+                    x: marginX, y: currentY - 14, size: 11, font: helveticaBoldOblique, color: PRETO
+                });
+                currentY -= 20;
+
+                const resumoH = 24;
+                page2.drawRectangle({
+                    x: marginX, y: currentY - resumoH, width: tableW, height: resumoH,
+                    borderColor: PRETO, borderWidth: 1
+                });
+
+                page2.drawText('Total a Pagar', {
+                    x: marginX + 5, y: currentY - 16, size: 10, font: helveticaBoldOblique, color: PRETO
+                });
+
+                // "R$"
+                page2.drawText('R$', {
+                    x: marginX + svcCols[0] + svcCols[1] + 10, y: currentY - 16, size: 10, font: helveticaBold, color: PRETO
+                });
+
+                // Total Amount
+                const totStr = totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                page2.drawText(totStr, {
+                    x: marginX + tableW - 5 - helveticaBold.widthOfTextAtSize(totStr, 11),
+                    y: currentY - 16, size: 11, font: helveticaBold, color: PRETO
+                });
+
+                currentY -= (resumoH + 20);
+
+                // ---- FOOTER NOTEs ----
+                const footerText = obsCustom || 'A taxa de serviço da Damas Clean Tudo pode ser isentada para serviços que ultrapassem duzentos e dez reais. Para valores de agendamentos que fiquem menores que esse valor...';
+                const footLines = splitText(footerText, helvetica, 7.5, tableW);
+                footLines.forEach(l => {
+                    page2.drawText(l, { x: marginX, y: currentY, size: 7.5, font: helvetica, color: PRETO });
+                    currentY -= 10;
+                });
+
+                // ---- SAVE PDF ----
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                const nomeClienteFile = nomeCliente.replace(/[^a-zA-ZÀ-ú\s]/g, '').trim().replace(/\s+/g, '_');
+                link.download = `Orcamento_${numOrc}_${nomeClienteFile}.pdf`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                // Restore button
+                btnPDF.innerHTML = originalText;
+                btnPDF.disabled = false;
+                showToast('✅ PDF gerado com sucesso!');
+
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                const btnPDF = document.getElementById('btnGerarPDF');
+                btnPDF.innerHTML = '📥 Gerar PDF';
+                btnPDF.disabled = false;
+                showToast('Erro ao gerar PDF: ' + error.message, true);
+            }
+        }
+
+        // Helper: split text into lines that fit within maxWidth
+        function splitText(text, font, fontSize, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                const testLine = currentLine ? currentLine + ' ' + word : word;
+                const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+                if (testWidth > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
                 }
             });
-            y += payH + 6;
-
-            // ---- OBSERVATION ----
-            setFont('italic', 7.5, TEXTO_SEC);
-            const obsText = 'Este orçamento tem validade de 7 dias. O agendamento será confirmado após contato via WhatsApp. Atendemos em domicílio em BH e região.';
-            const obsLines = doc.splitTextToSize(obsText, contentW - 8);
-            doc.setDrawColor(...AZUL_CLARO);
-            doc.setLineWidth(1);
-            doc.line(margin, y, margin, y + obsLines.length * 4.5);
-            doc.text(obsLines, margin + 5, y + 3);
-            y += obsLines.length * 4.5 + 8;
-
-            // ---- FOOTER ----
-            doc.setDrawColor(...AZUL_CLARO);
-            doc.setLineWidth(0.6);
-            doc.line(margin, y, W - margin, y);
-            y += 5;
-
-            setFont('normal', 7, TEXTO_SEC);
-            doc.text('Damas Clean · Higienização Profissional de Estofados · BH e Região', W / 2, y, { align: 'center' });
-            y += 4;
-            doc.text('WhatsApp: (31) 9971-0420 · contato@damasclean.com.br', W / 2, y, { align: 'center' });
-
-            // ---- SAVE ----
-            const nomeCliente = document.getElementById('nomeCliente').value.replace(/[^a-zA-ZÀ-ú\s]/g, '').trim().replace(/\s+/g, '_');
-            const numOrc = document.getElementById('numOrcamento').value;
-            doc.save(`Orcamento_${numOrc}_${nomeCliente}.pdf`);
-
-            showToast('✅ PDF gerado com sucesso!');
+            if (currentLine) lines.push(currentLine);
+            return lines;
         }
     </script>
 </body>
