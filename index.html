@@ -840,10 +840,6 @@
             color: var(--success);
         }
 
-        .upsell-box {
-            display: none !important;
-        }
-
         .total-final-box {
             background: var(--surface);
             border: 1px solid var(--brand);
@@ -1425,26 +1421,11 @@
 
                 <div class="search-wrap">
                     <input type="text" class="search-input" id="searchService"
-                        placeholder="Buscar estofado, colchão ou pacote..." onkeyup="filterServices()">
+                        placeholder="Buscar estofado, colchão ou serviço..." onkeyup="filterServices()">
                 </div>
 
                 <div class="services-list" id="servicesBody">
                     <!-- Gerado por JS -->
-                </div>
-
-                <div class="upsell-box" id="upsellBox">
-                    <div class="upsell-icon">🛡️</div>
-                    <div class="upsell-content">
-                        <h4>Proteção Extra: Impermeabilização</h4>
-                        <p>Aumente o ticket do orçamento oferecendo proteção contra manchas e líquidos.</p>
-                        <span class="upsell-price">Por peça: + R$ 80,00</span>
-                    </div>
-                    <div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="upsellCheck" onchange="onUpsellChange()">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -1462,35 +1443,23 @@
 
                     <div class="summary-totals">
                         <div class="sum-row">
-                            <span>Subtotal limpeza</span>
+                            <span>Subtotal dos serviços</span>
                             <span class="val" id="subtotal">R$ 0,00</span>
                         </div>
                         <div class="sum-row extra-total-row" id="extraSubtotalRow" style="display:none;">
-                            <span>Protecao impermeabilizante</span>
+                            <span>Impermeabilização</span>
                             <span class="val" id="extraSubtotal">R$ 0,00</span>
                         </div>
-                        <div id="comboDiscountsWrap" style="display:none;"></div>
-                        <div class="sum-row savings-row" id="totalSavingsRow" style="display:none;">
-                            <span>Economia total</span>
-                            <span class="val" id="totalSavingsValue">R$ 0,00</span>
-                        </div>
-                        <div class="sum-row upsell-totalRow" id="upsellRow" style="display:none;">
-                            <span>💡 Impermeabilização</span>
-                            <span class="val" id="upsellTotal">+ R$ 0,00</span>
+                        <div class="sum-row" id="serviceFeeRow">
+                            <span>Taxa de serviço</span>
+                            <span class="val" id="serviceFeeTotal">Isenta</span>
                         </div>
 
                         <div class="total-final-box">
                             <div class="total-label">Total do Orçamento</div>
-                            <div class="total-original" id="budgetOriginalTotalWrap" style="display:none;">
-                                <span class="prefix">De:</span>
-                                <span class="old" id="budgetOriginalTotal">R$ 0,00</span>
-                            </div>
                             <div class="total-current">
-                                <span class="prefix" id="budgetCurrentPrefix" style="display:none;">Por:</span>
                                 <div class="total-value" id="totalFinal">R$ 0,00</div>
                             </div>
-                            <div class="total-savings" id="budgetSavingsNote" style="display:none;">Economia total neste orçamento: R$ 0,00</div>
-                            <div class="total-justification" id="budgetDiscountReason" style="display:none;"></div>
                             <div class="total-details">
                                 <span class="details-pix" id="pixHighlight">💰 PIX à vista: R$ 0,00</span>
                                 <span class="details-inst" id="installmentHighlight">💳 4x de R$ 0,00</span>
@@ -1508,7 +1477,6 @@
                     <!-- Hidden inputs for compatibility -->
                     <span id="descontoPix" style="display:none"></span>
                     <span id="parcela4x" style="display:none"></span>
-                    <span id="upsellLabel" style="display:none"></span>
 
                     <div class="quick-actions">
                         <button class="btn btn-outline btn-sm" onclick="preVisualizar()" id="btnPreview">👁️
@@ -1569,56 +1537,28 @@
             {
                 category: 'SOFÁS',
                 services: [
-                    { name: 'Sofá 2 lugares', price: 220 },
-                    { name: 'Sofá 3 lugares', price: 280 },
-                    { name: 'Sofá retrátil / chaise', price: 320 },
-                    { name: 'Sofá em L (canto)', price: 380 },
-                    { name: 'Sofá 4 lugares ou mais', price: 420 },
+                    { name: 'Sofá 2 lugares', price: 180, impermeabilizacao: 180, impermeabilizacaoLabel: 'Impermeab. Sofá 2 lugares' },
+                    { name: 'Sofá 3 lugares', price: 220, impermeabilizacao: 220, impermeabilizacaoLabel: 'Impermeab. Sofá 3 lugares' },
+                    { name: 'Sofá retrátil / chaise', price: 250, impermeabilizacao: 250, impermeabilizacaoLabel: 'Impermeab. Sofá retrátil / chaise' },
+                    { name: 'Sofá em L (canto)', price: 280, impermeabilizacao: 260, impermeabilizacaoLabel: 'Impermeab. Sofá em L' },
+                    { name: 'Sofá 4 lugares ou mais', price: 300 },
                 ]
             },
             {
                 category: 'COLCHÕES',
                 services: [
-                    { name: 'Colchão solteiro', price: 180 },
-                    { name: 'Colchão casal', price: 250 },
-                    { name: 'Colchão queen', price: 280 },
-                    { name: 'Colchão king', price: 300 },
-                ]
-            },
-            {
-                category: 'IMPERMEABILIZAÇÃO',
-                services: [
-                    { name: 'Impermeab. Sofá 2 lugares', price: 180 },
-                    { name: 'Impermeab. Sofá 3 lugares', price: 220 },
-                    { name: 'Impermeab. Sofá retrátil / chaise', price: 250 },
-                    { name: 'Impermeab. Sofá em L', price: 260 },
-                    { name: 'Impermeab. Colchão solteiro', price: 100 },
-                    { name: 'Impermeab. Colchão casal', price: 130 },
-                    { name: 'Impermeab. Colchão queen', price: 150 },
-                    { name: 'Impermeab. Poltrona', price: 70 },
+                    { name: 'Colchão solteiro', price: 150, impermeabilizacao: 100, impermeabilizacaoLabel: 'Impermeab. Colchão solteiro' },
+                    { name: 'Colchão casal', price: 180, impermeabilizacao: 130, impermeabilizacaoLabel: 'Impermeab. Colchão casal' },
+                    { name: 'Colchão queen', price: 230, impermeabilizacao: 150, impermeabilizacaoLabel: 'Impermeab. Colchão queen' },
+                    { name: 'Colchão king', price: 250 },
                 ]
             },
             {
                 category: 'OUTROS',
                 services: [
-                    { name: 'Poltrona', price: 100 },
+                    { name: 'Poltrona', price: 100, impermeabilizacao: 70, impermeabilizacaoLabel: 'Impermeab. Poltrona' },
                     { name: 'Cadeira estofada', price: 60 },
-                    { name: 'Carro (completo)', price: 450 },
-                ]
-            },
-            {
-                category: 'PACOTES ESPECIAIS',
-                subtitle: 'desconto já incluído no preço',
-                services: [
-                    { name: 'Sofá 3 lug + Impermeab. Sofá 3 lug', price: 450, isPackage: true },
-                    { name: 'Sofá retrátil + Impermeab. retrátil', price: 520, isPackage: true },
-                    { name: 'Sofá em L + Impermeab. Sofá em L', price: 590, isPackage: true },
-                    { name: 'Sofá 3 lug + Colchão casal', price: 480, isPackage: true },
-                    { name: 'Sofá em L + Colchão casal', price: 560, isPackage: true },
-                    { name: 'Sofá 3 lug + Colchão casal + Impermeab. ambos', price: 680, isPackage: true },
-                    { name: 'Sofá em L + Colchão queen + Impermeab. ambos', price: 800, isPackage: true },
-                    { name: 'Sofá 3 lug + 2 Poltronas', price: 430, isPackage: true },
-                    { name: 'Premium: Sofá em L + Colchão queen', price: 600, isPackage: true },
+                    { name: 'Carro (completo)', price: 350 },
                 ]
             }
         ];
@@ -1634,6 +1574,7 @@
         const PIX_DISCOUNT = 0.05;
         const INSTALLMENTS = 4;
         const VALIDITY_DAYS = 7;
+        const SERVICE_FEE_THRESHOLD = 220;
 
         // ---- INIT ----
         document.addEventListener('DOMContentLoaded', () => {
@@ -1709,22 +1650,29 @@
                     // Hidden checkbox compatibility
                     const chk = `<input type="checkbox" id="check_${i}" onchange="onServiceChange(${i})" style="display:none">`;
 
-                    let discountHtml = '';
-                    if (!svc.isPackage) {
-                        discountHtml = `<div class="svc-discount-wrap"><label>Desc. R$</label><input type="number" id="discount_${i}" value="0" min="0" step="5" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})"></div>`;
-                    } else {
-                        // hidden discount to keep logic intact
-                        discountHtml = `<input type="hidden" id="discount_${i}" value="0">`;
-                    }
-
-                    const badge = svc.isPackage ? `<span class="svc-package-tag">Pacote</span>` : '';
+                    const discountHtml = `<div class="svc-discount-wrap"><label>Desc. R$</label><input type="number" id="discount_${i}" value="0" min="0" step="5" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})"></div>`;
+                    const extraHtml = typeof svc.impermeabilizacao === 'number' ? `
+                        <div class="service-extra disabled" id="extraBox_${i}">
+                            <div class="service-extra-copy">
+                                <span class="service-extra-kicker">Serviço Opcional</span>
+                                <label class="service-extra-title" for="impermeabilizacao_${i}">Adicionar impermeabilização</label>
+                                <span class="service-extra-subtitle">${svc.impermeabilizacaoLabel}</span>
+                                <span class="service-extra-price">${formatCurrency(svc.impermeabilizacao)} por unidade</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="impermeabilizacao_${i}" onchange="onImpermeabilizacaoChange(${i})" disabled>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    ` : '';
 
                     card.innerHTML = `
                         ${chk}
                         <div class="svc-info">
-                            <div class="svc-name">${svc.name} ${badge}</div>
+                            <div class="svc-name">${svc.name}</div>
                             <div class="svc-price">${formatCurrency(svc.price)}</div>
                             ${discountHtml}
+                            ${extraHtml}
                         </div>
                         <div class="svc-controls">
                             <div class="stepper">
@@ -1774,6 +1722,34 @@
             document.getElementById('summarySidebar').scrollIntoView({ behavior: 'smooth' });
         }
 
+        function getImpermeabilizacaoInput(index) {
+            return document.getElementById(`impermeabilizacao_${index}`);
+        }
+
+        function syncImpermeabilizacaoState(index) {
+            const service = SERVICES[index];
+            if (!service || typeof service.impermeabilizacao !== 'number') return;
+
+            const qty = parseInt(document.getElementById(`qty_${index}`).value) || 0;
+            const input = getImpermeabilizacaoInput(index);
+            const box = document.getElementById(`extraBox_${index}`);
+            const row = document.getElementById(`serviceRow_${index}`);
+            if (!input || !box || !row) return;
+
+            const enabled = qty > 0;
+            input.disabled = !enabled;
+            if (!enabled) input.checked = false;
+
+            box.classList.toggle('disabled', !enabled);
+            box.classList.toggle('active', enabled && input.checked);
+            row.classList.toggle('has-protection', enabled && input.checked);
+        }
+
+        function onImpermeabilizacaoChange(index) {
+            syncImpermeabilizacaoState(index);
+            updateSummary();
+        }
+
         // ---- CALCULATIONS ----
         function onServiceChange(index) {
             const checked = document.getElementById(`check_${index}`).checked;
@@ -1803,35 +1779,24 @@
                 row.classList.remove('selected');
             }
 
+            syncImpermeabilizacaoState(index);
             updateSummary();
             updateServiceCounter();
         }
 
-        const UPSELL_PRICE = 80;
-
-        function getUpsellTotal() {
-            if (!document.getElementById('upsellCheck').checked) return 0;
-            const services = getSelectedServices();
-            const totalPieces = services.reduce((sum, sv) => sum + sv.qty, 0);
-            return totalPieces * UPSELL_PRICE;
-        }
-
-        function onUpsellChange() {
-            const checked = document.getElementById('upsellCheck').checked;
-            document.getElementById('upsellLabel').textContent = checked ? 'Adicionado ✓' : 'Adicionar';
-            updateSummary();
-        }
-
         function updateServiceCounter() {
-            const selected = getSelectedServices();
+            const selected = getBudgetData().services;
             const counter = document.getElementById('serviceCounter');
             const count = selected.length;
             counter.textContent = `${count} serviço(s) selecionado(s)`;
             counter.className = 'service-counter' + (count > 0 ? ' active' : '');
         }
 
-        function updateSummary() {
-            let subtotal = 0;
+        function getBudgetData() {
+            const services = [];
+            const lineItems = [];
+            let serviceSubtotal = 0;
+            let extraSubtotal = 0;
 
             SERVICES.forEach((svc, i) => {
                 const checked = document.getElementById(`check_${i}`).checked;
@@ -1839,41 +1804,86 @@
                     const qty = parseInt(document.getElementById(`qty_${i}`).value) || 0;
                     const discountEl = document.getElementById(`discount_${i}`);
                     const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
-                    subtotal += Math.max(0, (svc.price * qty) - discount);
+                    const total = Math.max(0, (svc.price * qty) - discount);
+                    const serviceItem = {
+                        name: svc.name,
+                        price: svc.price,
+                        qty: qty,
+                        discount: discount,
+                        total: total
+                    };
+
+                    serviceSubtotal += total;
+                    services.push(serviceItem);
+                    lineItems.push(serviceItem);
+
+                    if (typeof svc.impermeabilizacao === 'number' && getImpermeabilizacaoInput(i)?.checked) {
+                        const extraItem = {
+                            name: svc.impermeabilizacaoLabel,
+                            price: svc.impermeabilizacao,
+                            qty: qty,
+                            discount: 0,
+                            total: svc.impermeabilizacao * qty,
+                            isExtra: true
+                        };
+
+                        extraSubtotal += extraItem.total;
+                        lineItems.push(extraItem);
+                    }
                 }
             });
 
-            const upsellTotal = getUpsellTotal();
-            const totalComUpsell = subtotal + upsellTotal;
-            const desconto = totalComUpsell * PIX_DISCOUNT;
-            const totalComPix = totalComUpsell - desconto;
-            const parcela = totalComUpsell / INSTALLMENTS;
+            const subtotal = serviceSubtotal + extraSubtotal;
+            const serviceFee = subtotal > 0 && subtotal < SERVICE_FEE_THRESHOLD
+                ? SERVICE_FEE_THRESHOLD - subtotal
+                : 0;
+            const totalGeral = subtotal + serviceFee;
+            const totalComPix = totalGeral - (totalGeral * PIX_DISCOUNT);
+            const parcela = totalGeral / INSTALLMENTS;
 
-            document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+            return {
+                services,
+                lineItems,
+                serviceSubtotal,
+                extraSubtotal,
+                subtotal,
+                serviceFee,
+                totalGeral,
+                totalComPix,
+                parcela
+            };
+        }
 
-            // Upsell row
-            const upsellRow = document.getElementById('upsellRow');
-            if (upsellTotal > 0) {
-                upsellRow.style.display = 'flex';
-                document.getElementById('upsellTotal').textContent = `+ ${formatCurrency(upsellTotal)}`;
+        function formatServiceFee(serviceFee) {
+            return serviceFee > 0 ? `+ ${formatCurrency(serviceFee)}` : 'Isenta';
+        }
+
+        function updateSummary() {
+            const budget = getBudgetData();
+
+            document.getElementById('subtotal').textContent = formatCurrency(budget.serviceSubtotal);
+            const extraSubtotalRow = document.getElementById('extraSubtotalRow');
+            if (budget.extraSubtotal > 0) {
+                extraSubtotalRow.style.display = 'flex';
+                document.getElementById('extraSubtotal').textContent = formatCurrency(budget.extraSubtotal);
             } else {
-                upsellRow.style.display = 'none';
+                extraSubtotalRow.style.display = 'none';
             }
-
-            document.getElementById('descontoPix').textContent = formatCurrency(totalComPix);
-            document.getElementById('parcela4x').textContent = `4x ${formatCurrency(parcela)}`;
-            document.getElementById('totalFinal').textContent = formatCurrency(totalComUpsell);
-            document.getElementById('pixHighlight').textContent = `💰 PIX à vista: ${formatCurrency(totalComPix)}`;
-            document.getElementById('installmentHighlight').textContent = `💳 4x de ${formatCurrency(parcela)}`;
+            document.getElementById('serviceFeeTotal').textContent = formatServiceFee(budget.serviceFee);
+            document.getElementById('descontoPix').textContent = formatCurrency(budget.totalComPix);
+            document.getElementById('parcela4x').textContent = `4x ${formatCurrency(budget.parcela)}`;
+            document.getElementById('totalFinal').textContent = formatCurrency(budget.totalGeral);
+            document.getElementById('pixHighlight').textContent = `💰 PIX à vista: ${formatCurrency(budget.totalComPix)}`;
+            document.getElementById('installmentHighlight').textContent = `💳 4x de ${formatCurrency(budget.parcela)}`;
 
             // NOVO: Populate Summary Sidebar
             const itemsList = document.getElementById('summaryItemsList');
-            const selectedList = getSelectedServices();
+            const selectedList = budget.lineItems;
             if (selectedList.length === 0) {
                 itemsList.innerHTML = '<div class="empty-state">Nenhum serviço selecionado no momento.</div>';
             } else {
                 itemsList.innerHTML = selectedList.map(sv => `
-                    <div class="summary-item">
+                    <div class="summary-item${sv.isExtra ? ' extra simple' : ' simple'}">
                         <span class="name">${sv.qty}x ${sv.name}</span>
                         <span class="val">${formatCurrency(sv.total)}</span>
                     </div>
@@ -1882,30 +1892,12 @@
 
             // NOVO: Update Mobile Bottom Bar Total
             const mobileTotalEl = document.getElementById('mobileTotal');
-            if (mobileTotalEl) mobileTotalEl.textContent = formatCurrency(totalComUpsell);
+            if (mobileTotalEl) mobileTotalEl.textContent = formatCurrency(budget.totalGeral);
 
         }
 
         function getSelectedServices() {
-            const selected = [];
-            SERVICES.forEach((svc, i) => {
-                const checked = document.getElementById(`check_${i}`).checked;
-                const qty = parseInt(document.getElementById(`qty_${i}`).value) || 0;
-                if (checked && qty > 0) {
-                    const discountEl = document.getElementById(`discount_${i}`);
-                    const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
-                    const total = Math.max(0, (svc.price * qty) - discount);
-                    selected.push({
-                        name: svc.name,
-                        price: svc.price,
-                        qty: qty,
-                        discount: discount,
-                        total: total,
-                        isPackage: svc.isPackage || false
-                    });
-                }
-            });
-            return selected;
+            return getBudgetData().services;
         }
 
         // ---- FORMAT ----
@@ -1947,16 +1939,18 @@
             document.getElementById('enderecoCliente').value = '';
             document.getElementById('bairroCliente').value = '';
             document.getElementById('observacoes').value = '';
-            document.getElementById('upsellCheck').checked = false;
-            document.getElementById('upsellLabel').textContent = 'Adicionar';
 
             SERVICES.forEach((svc, i) => {
                 document.getElementById(`check_${i}`).checked = false;
                 document.getElementById(`qty_${i}`).value = 0;
                 document.getElementById(`total_${i}`).textContent = 'R$ 0,00';
                 document.getElementById(`serviceRow_${i}`).classList.remove('selected');
+                document.getElementById(`serviceRow_${i}`).classList.remove('has-protection');
                 const discountEl = document.getElementById(`discount_${i}`);
                 if (discountEl) discountEl.value = 0;
+                const extraInput = getImpermeabilizacaoInput(i);
+                if (extraInput) extraInput.checked = false;
+                syncImpermeabilizacaoState(i);
             });
 
             generateBudgetNumber();
@@ -1970,32 +1964,29 @@
         function copiarWhatsApp() {
             if (!validate()) return;
 
-            const services = getSelectedServices();
-            const subtotal = services.reduce((s, sv) => s + sv.total, 0);
-            const upsellTotal = getUpsellTotal();
-            const totalGeral = subtotal + upsellTotal;
-            const totalPix = totalGeral - (totalGeral * PIX_DISCOUNT);
-            const parcela = totalGeral / INSTALLMENTS;
+            const budget = getBudgetData();
+            const items = budget.lineItems;
 
             let msg = `Segue o orçamento conforme solicitado!\n`;
             msg += `━━━━━━━━━━━━━━━━━━━\n`;
             msg += `🛋️ SERVIÇOS\n`;
             msg += `━━━━━━━━━━━━━━━━━━━\n`;
 
-            services.forEach(sv => {
+            items.forEach(sv => {
                 const qtyStr = sv.qty > 1 ? ` (${sv.qty}x)` : '';
                 msg += `✅ ${sv.name}${qtyStr} → ${formatCurrency(sv.total)}\n`;
             });
 
-            if (upsellTotal > 0) {
-                msg += `✅ Impermeabilização → ${formatCurrency(upsellTotal)}\n`;
-            }
-
             msg += `━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `💰 Total: ${formatCurrency(totalGeral)}\n`;
+            msg += `Subtotal dos serviços: ${formatCurrency(budget.serviceSubtotal)}\n`;
+            if (budget.extraSubtotal > 0) {
+                msg += `Impermeabilização: ${formatCurrency(budget.extraSubtotal)}\n`;
+            }
+            msg += `Taxa de serviço: ${budget.serviceFee > 0 ? formatCurrency(budget.serviceFee) : 'Isenta'}\n`;
+            msg += `💰 Total: ${formatCurrency(budget.totalGeral)}\n`;
             msg += `💳 Formas de pagamento: \n`;
-            msg += `🟢 PIX à vista → ${formatCurrency(totalPix)} (5% OFF)\n`;
-            msg += `💳 Cartão → 4x de ${formatCurrency(parcela)} sem juros\n`;
+            msg += `🟢 PIX à vista → ${formatCurrency(budget.totalComPix)} (5% OFF)\n`;
+            msg += `💳 Cartão → 4x de ${formatCurrency(budget.parcela)} sem juros\n`;
             msg += `━━━━━━━━━━━━━━━━━━━\n`;
             msg += `📅 Tenho horário disponível ainda essa semana no seu bairro! Qual horário fica melhor pra você?`;
 
@@ -2038,21 +2029,16 @@
         });
 
         function buildPreviewHTML() {
-            const services = getSelectedServices();
-            const subtotal = services.reduce((s, sv) => s + sv.total, 0);
-            const upsellTotal = getUpsellTotal();
-            const totalGeral = subtotal + upsellTotal;
-            const desconto = totalGeral * PIX_DISCOUNT;
-            const totalPix = totalGeral - desconto;
-            const parcela = totalGeral / INSTALLMENTS;
+            const budget = getBudgetData();
+            const items = budget.lineItems;
             const bairro = document.getElementById('bairroCliente').value;
             const obs = document.getElementById('observacoes').value.trim();
 
             let serviceRows = '';
-            services.forEach((sv, i) => {
-                const discountDisplay = sv.isPackage ? 'Incluso' : formatCurrency(sv.discount);
+            items.forEach((sv) => {
+                const discountDisplay = formatCurrency(sv.discount);
                 serviceRows += `
-                    <tr>
+                    <tr${sv.isExtra ? ' style="background:#FFF7E8;"' : ''}>
                         <td>${sv.name}</td>
                         <td style="text-align:center">${formatCurrency(sv.price)}</td>
                         <td style="text-align:center">${sv.qty}</td>
@@ -2060,13 +2046,6 @@
                         <td style="text-align:center;color:#1E6B3C;font-weight:700">${formatCurrency(sv.total)}</td>
                     </tr>`;
             });
-
-            let upsellHtml = '';
-            if (upsellTotal > 0) {
-                upsellHtml = `<div style="background:#FFF9C4;border-left:4px solid #e67e22;padding:10px 14px;margin-bottom:12px;border-radius:0 6px 6px 0;">
-                    <strong style="color:#7f4c00;">💡 Impermeabilização:</strong> <span style="color:#e67e22;font-weight:700;">+ ${formatCurrency(upsellTotal)}</span>
-                </div>`;
-            }
 
             let obsHtml = '';
             if (obs) {
@@ -2098,7 +2077,7 @@
                             <td>${document.getElementById('numOrcamento').value}</td>
                             <td>${document.getElementById('dataEmissao').value}</td>
                             <td style="font-weight:700;color:#1A3C5E;">${document.getElementById('dataValidade').value}</td>
-                            <td style="color:#2D6A9F;font-weight:800">${formatCurrency(totalGeral)}</td>
+                            <td style="color:#2D6A9F;font-weight:800">${formatCurrency(budget.totalGeral)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -2122,20 +2101,19 @@
                     <tbody>${serviceRows}</tbody>
                 </table>
 
-                ${upsellHtml}
-
                 <div class="preview-summary">
-                    <p><strong>Subtotal:</strong> ${formatCurrency(subtotal)}</p>
-                    ${upsellTotal > 0 ? `<p style="color:#e67e22"><strong>Impermeabilização:</strong> + ${formatCurrency(upsellTotal)}</p>` : ''}
+                    <p><strong>Subtotal dos serviços:</strong> ${formatCurrency(budget.serviceSubtotal)}</p>
+                    ${budget.extraSubtotal > 0 ? `<p><strong>Impermeabilização:</strong> ${formatCurrency(budget.extraSubtotal)}</p>` : ''}
+                    <p><strong>Taxa de serviço:</strong> ${budget.serviceFee > 0 ? `+ ${formatCurrency(budget.serviceFee)}` : 'Isenta'}</p>
                 </div>
 
                 <div class="preview-total-box">
                     <span class="total-label">Total a Pagar</span>
-                    <span class="total-value">${formatCurrency(totalGeral)}</span>
+                    <span class="total-value">${formatCurrency(budget.totalGeral)}</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;background:#1E6B3C;color:#fff;padding:8px 16px;border-radius:0 0 6px 6px;margin-top:-8px;margin-bottom:12px;font-size:0.82rem;font-weight:600;">
-                    <span>💰 PIX à vista: ${formatCurrency(totalPix)}</span>
-                    <span>💳 4x de ${formatCurrency(parcela)}</span>
+                    <span>💰 PIX à vista: ${formatCurrency(budget.totalComPix)}</span>
+                    <span>💳 4x de ${formatCurrency(budget.parcela)}</span>
                 </div>
 
                 <div class="preview-payment">
@@ -2204,13 +2182,8 @@
                 const PRETO = rgb(0, 0, 0);
 
                 // Get form data
-                const services = getSelectedServices();
-                const subtotal = services.reduce((s, sv) => s + sv.total, 0);
-                const upsellTotal = getUpsellTotal();
-                const totalGeral = subtotal + upsellTotal;
-                const desconto = totalGeral * PIX_DISCOUNT;
-                const totalPix = totalGeral - desconto;
-                const parcela = totalGeral / INSTALLMENTS;
+                const budget = getBudgetData();
+                const items = budget.lineItems;
 
                 const numOrc = document.getElementById('numOrcamento').value;
                 const dataEmissao = document.getElementById('dataEmissao').value;
@@ -2290,8 +2263,8 @@
                 });
 
                 // Valor (4x and a vista)
-                const v4x = `4x de ${formatCurrency(parcela)}`;
-                const vVista = `ou ${formatCurrency(totalPix)} à vista`;
+                const v4x = `4x de ${formatCurrency(budget.parcela)}`;
+                const vVista = `ou ${formatCurrency(budget.totalComPix)} à vista`;
                 const vXBase = marginX + colsT1[0] + colsT1[1] + colsT1[2] + (colsT1[3] / 2);
                 page2.drawText(v4x, {
                     x: vXBase - (helveticaBoldOblique.widthOfTextAtSize(v4x, 12) / 2),
@@ -2370,12 +2343,7 @@
                 currentY -= t3HeaderH;
 
                 // Service Rows
-                const allServices = [...services];
-                if (upsellTotal > 0) {
-                    allServices.push({ name: 'Impermeabilização (Adicional)', qty: '-', price: upsellTotal, total: upsellTotal });
-                }
-
-                allServices.forEach(sv => {
+                items.forEach(sv => {
                     const rowH = 34; // Generous height for potential 2 lines
                     page2.drawRectangle({
                         x: marginX, y: currentY - rowH, width: tableW, height: rowH,
@@ -2427,32 +2395,36 @@
                 });
                 currentY -= 20;
 
-                const resumoH = 24;
-                page2.drawRectangle({
-                    x: marginX, y: currentY - resumoH, width: tableW, height: resumoH,
-                    borderColor: PRETO, borderWidth: 1
+                const summaryRows = [
+                    { label: 'Subtotal dos serviços', value: formatCurrency(budget.serviceSubtotal), font: helvetica, size: 10 },
+                    ...(budget.extraSubtotal > 0 ? [{ label: 'Impermeabilização', value: formatCurrency(budget.extraSubtotal), font: helvetica, size: 10 }] : []),
+                    { label: 'Taxa de serviço', value: budget.serviceFee > 0 ? formatCurrency(budget.serviceFee) : 'Isenta', font: helvetica, size: 10 },
+                    { label: 'Total a Pagar', value: formatCurrency(budget.totalGeral), font: helveticaBold, size: 11 }
+                ];
+
+                summaryRows.forEach((row) => {
+                    const rowH = 24;
+                    page2.drawRectangle({
+                        x: marginX, y: currentY - rowH, width: tableW, height: rowH,
+                        borderColor: PRETO, borderWidth: 1
+                    });
+
+                    page2.drawText(row.label, {
+                        x: marginX + 5, y: currentY - 16, size: row.size, font: row.font, color: PRETO
+                    });
+
+                    page2.drawText(row.value, {
+                        x: marginX + tableW - 5 - row.font.widthOfTextAtSize(row.value, row.size),
+                        y: currentY - 16, size: row.size, font: row.font, color: PRETO
+                    });
+
+                    currentY -= rowH;
                 });
 
-                page2.drawText('Total a Pagar', {
-                    x: marginX + 5, y: currentY - 16, size: 10, font: helveticaBoldOblique, color: PRETO
-                });
-
-                // "R$"
-                page2.drawText('R$', {
-                    x: marginX + svcCols[0] + svcCols[1] + 10, y: currentY - 16, size: 10, font: helveticaBold, color: PRETO
-                });
-
-                // Total Amount
-                const totStr = totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                page2.drawText(totStr, {
-                    x: marginX + tableW - 5 - helveticaBold.widthOfTextAtSize(totStr, 11),
-                    y: currentY - 16, size: 11, font: helveticaBold, color: PRETO
-                });
-
-                currentY -= (resumoH + 20);
+                currentY -= 20;
 
                 // ---- FOOTER NOTEs ----
-                const footerText = obsCustom || 'A taxa de serviço da Damas Clean pode ser isentada para serviços que ultrapassem duzentos e dez reais. Para valores de agendamentos que fiquem menores que esse valor, uma taxa de serviço será cobrada para arcar com custos de operação,deslocamento e atendimento. O valor pode variar de acordo com a região do usuário devido às variações de custo de cada cidade.';
+                const footerText = obsCustom || 'A taxa de serviço da Damas Clean pode ser isentada para serviços que ultrapassem duzentos e vinte reais. Para valores de agendamentos que fiquem menores que esse valor, uma taxa de serviço será cobrada para arcar com custos de operação, deslocamento e atendimento. O valor pode variar de acordo com a região do usuário devido às variações de custo de cada cidade.';
                 const footLines = splitText(footerText, helvetica, 7.5, tableW);
                 footLines.forEach(l => {
                     page2.drawText(l, { x: marginX, y: currentY, size: 7.5, font: helvetica, color: PRETO });
@@ -2503,7 +2475,6 @@
             return lines;
         }
     </script>
-    <script src="app-overrides.js"></script>
 </body>
 
 </html>
