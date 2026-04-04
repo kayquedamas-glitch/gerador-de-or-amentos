@@ -568,22 +568,19 @@
         if (!validate()) return;
 
         const budget = buildBudgetData();
-        let msg = `Para o seu caso, referente a todos os itens, o valor total fica em ${formatCurrency(budget.totalGeral)}.\n`;
-        msg += `podendo parcelar em ate 4x de ${formatCurrency(budget.parcela)} sem juros 💰\n\n`;
-        msg += 'A limpeza inclui:\n';
-        msg += '✔ Limpeza profunda de todos os estofados\n';
-        msg += '✔ Remocao de acaros, fungos e bacterias\n';
-        msg += '✔ Eliminacao de odores\n';
-        msg += '✔ Secagem rapida\n';
-        msg += '✔ Finalizacao com aroma suave\n\n';
+        const serviceLines = budget.lineItems.map(item => {
+            const qtyStr = item.qty > 1 ? ` (${item.qty}x)` : '';
+            return `✔ ${item.name}${qtyStr} — *${formatCurrency(item.total)}*`;
+        }).join('\n');
 
-        if (budget.extraSubtotal > 0) {
-            msg += `💧 A impermeabilizacao ja foi incluida neste orcamento, somando ${formatCurrency(budget.extraSubtotal)} para proteger o tecido contra liquidos e sujeiras por meses 👍\n\n`;
-        } else {
-            msg += '💧 Tambem temos a opcao de impermeabilizacao, que ajuda a proteger o tecido contra liquidos e sujeiras por meses — se depois quiser incluir, consigo ajustar pra voce 👍\n\n';
-        }
-
-        msg += 'Tenho disponibilidade ai na sua regiao essa semana — me fala qual periodo fica melhor pra voce que ja reservo 👍';
+        let msg = `Perfeito! Te enviei o orçamento 😊\n\n`;
+        msg += `*Serviço solicitado:*\n`;
+        msg += `${serviceLines}\n\n`;
+        msg += `*Formas de pagamento:*\n`;
+        msg += `💰 PIX à vista: *${formatCurrency(budget.totalPix)}*\n`;
+        msg += `💳 Cartão: *4x de ${formatCurrency(budget.parcela)} sem juros*\n\n`;
+        msg += `A limpeza inclui higienização completa, remoção de sujeira profunda, ácaros e odores, com secagem rápida.\n\n`;
+        msg += `Tenho disponibilidade aí na sua região essa semana — me fala qual período fica melhor pra você que já reservo 👍`;
 
         navigator.clipboard.writeText(msg).then(() => {
             showToast('Mensagem copiada para o WhatsApp!');

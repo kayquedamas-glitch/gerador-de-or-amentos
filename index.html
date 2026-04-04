@@ -1966,29 +1966,19 @@
 
             const budget = getBudgetData();
             const items = budget.lineItems;
+            const serviceLines = items.map(item => {
+                const qtyStr = item.qty > 1 ? ` (${item.qty}x)` : '';
+                return `✔ ${item.name}${qtyStr} — *${formatCurrency(item.total)}*`;
+            }).join('\n');
 
-            let msg = `Segue o orçamento conforme solicitado!\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `🛋️ SERVIÇOS\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━\n`;
-
-            items.forEach(sv => {
-                const qtyStr = sv.qty > 1 ? ` (${sv.qty}x)` : '';
-                msg += `✅ ${sv.name}${qtyStr} → ${formatCurrency(sv.total)}\n`;
-            });
-
-            msg += `━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `Subtotal dos serviços: ${formatCurrency(budget.serviceSubtotal)}\n`;
-            if (budget.extraSubtotal > 0) {
-                msg += `Impermeabilização: ${formatCurrency(budget.extraSubtotal)}\n`;
-            }
-            msg += `Taxa de serviço: ${budget.serviceFee > 0 ? formatCurrency(budget.serviceFee) : 'Isenta'}\n`;
-            msg += `💰 Total: ${formatCurrency(budget.totalGeral)}\n`;
-            msg += `💳 Formas de pagamento: \n`;
-            msg += `🟢 PIX à vista → ${formatCurrency(budget.totalComPix)} (5% OFF)\n`;
-            msg += `💳 Cartão → 4x de ${formatCurrency(budget.parcela)} sem juros\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `📅 Tenho horário disponível ainda essa semana no seu bairro! Qual horário fica melhor pra você?`;
+            let msg = `Perfeito! Te enviei o orçamento 😊\n\n`;
+            msg += `*Serviço solicitado:*\n`;
+            msg += `${serviceLines}\n\n`;
+            msg += `*Formas de pagamento:*\n`;
+            msg += `💰 PIX à vista: *${formatCurrency(budget.totalComPix)}*\n`;
+            msg += `💳 Cartão: *4x de ${formatCurrency(budget.parcela)} sem juros*\n\n`;
+            msg += `A limpeza inclui higienização completa, remoção de sujeira profunda, ácaros e odores, com secagem rápida.\n\n`;
+            msg += `Tenho disponibilidade aí na sua região essa semana — me fala qual período fica melhor pra você que já reservo 👍`;
 
             navigator.clipboard.writeText(msg).then(() => {
                 showToast('✅ Mensagem copiada para o WhatsApp!');
