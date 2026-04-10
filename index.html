@@ -1972,13 +1972,13 @@
             }).join('\n');
 
             let msg = `Perfeito! Te enviei o orçamento 😊\n\n`;
-            msg += `*Serviço solicitado:*\n`;
-            msg += `${serviceLines}\n\n`;
-            msg += `*Formas de pagamento:*\n`;
-            msg += `💰 PIX à vista: *${formatCurrency(budget.totalComPix)}*\n`;
-            msg += `💳 Cartão: *4x de ${formatCurrency(budget.parcela)} sem juros*\n\n`;
-            msg += `A limpeza inclui higienização completa, remoção de sujeira profunda, ácaros e odores, com secagem rápida.\n\n`;
-            msg += `Tenho disponibilidade aí na sua região essa semana — me fala qual período fica melhor pra você que já reservo 👍`;
+        msg += `*Serviço solicitado:*\n`;
+        msg += `${serviceLines}\n\n`;
+        msg += `*Formas de pagamento:*\n`;
+        msg += `PIX à vista: *${formatCurrency(budget.totalPix)}*\n`;
+        msg += `Cartão: *4x de ${formatCurrency(budget.parcela)} sem juros*\n\n`;
+        msg += `A limpeza inclui higienização completa, remoção de sujeira profunda, ácaros e odores.\n\n`;
+        msg += `Tenho disponibilidade aí na sua região essa semana, Qual dia costuma ser melhor pra você?`;
 
             navigator.clipboard.writeText(msg).then(() => {
                 showToast('✅ Mensagem copiada para o WhatsApp!');
