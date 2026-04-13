@@ -343,6 +343,69 @@
             margin-top: 4px;
         }
 
+        .svc-price-note {
+            display: block;
+            margin-top: 3px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .svc-config-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .svc-input-card {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .svc-input-card label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .svc-input-card input {
+            width: 100%;
+            border: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--primary);
+            outline: none;
+            background: transparent;
+        }
+
+        .svc-reset-btn {
+            grid-column: 1 / -1;
+            width: fit-content;
+            border: 1px dashed #94A3B8;
+            background: #F8FAFC;
+            color: var(--text-muted);
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .svc-reset-btn:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+            background: var(--brand-light);
+        }
+
         .svc-benefit {
             display: none;
             margin-top: 10px;
@@ -695,6 +758,13 @@
             line-height: 1.3;
         }
 
+        .summary-item-copy-block {
+            display: grid;
+            gap: 4px;
+            flex: 1;
+            min-width: 0;
+        }
+
         .summary-item-badge {
             white-space: nowrap;
             border-radius: 999px;
@@ -970,6 +1040,65 @@
             outline: none;
             border-color: var(--brand);
             background: var(--surface);
+        }
+
+        .advanced-wrap {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+        }
+
+        .advanced-wrap label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .advanced-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .advanced-field {
+            display: grid;
+            gap: 6px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #FFFFFF;
+        }
+
+        .advanced-field.disabled {
+            opacity: 0.6;
+            background: #F8FAFC;
+        }
+
+        .advanced-label {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .advanced-inline {
+            display: grid;
+            grid-template-columns: 92px 1fr;
+            gap: 8px;
+        }
+
+        .advanced-inline .form-control,
+        .advanced-field .form-control {
+            padding: 9px 10px;
+            font-size: 0.85rem;
+        }
+
+        .advanced-help {
+            font-size: 0.74rem;
+            color: #64748B;
+            line-height: 1.45;
         }
 
         /* ACTIONS */
@@ -1322,6 +1451,14 @@
                 gap: 8px;
             }
 
+            .svc-config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .advanced-inline {
+                grid-template-columns: 1fr;
+            }
+
             .svc-total {
                 text-align: right;
             }
@@ -1450,8 +1587,20 @@
                             <span>Impermeabilização</span>
                             <span class="val" id="extraSubtotal">R$ 0,00</span>
                         </div>
+                        <div class="sum-row discount-row" id="globalDiscountRow" style="display:none;">
+                            <span id="globalDiscountLabel">Desconto global</span>
+                            <span class="val" id="globalDiscountTotal">- R$ 0,00</span>
+                        </div>
+                        <div class="sum-row" id="additionalChargeRow" style="display:none;">
+                            <span>Acréscimo</span>
+                            <span class="val" id="additionalChargeTotal">+ R$ 0,00</span>
+                        </div>
+                        <div class="sum-row" id="adjustedSubtotalRow" style="display:none;">
+                            <span>Subtotal ajustado</span>
+                            <span class="val" id="adjustedSubtotalTotal">R$ 0,00</span>
+                        </div>
                         <div class="sum-row" id="serviceFeeRow">
-                            <span>Taxa de serviço</span>
+                            <span id="serviceFeeLabel">Taxa de serviço</span>
                             <span class="val" id="serviceFeeTotal">Isenta</span>
                         </div>
 
@@ -1463,6 +1612,44 @@
                             <div class="total-details">
                                 <span class="details-pix" id="pixHighlight">💰 PIX à vista: R$ 0,00</span>
                                 <span class="details-inst" id="installmentHighlight">💳 4x de R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="advanced-wrap">
+                        <label><span style="font-size: 1rem; vertical-align:-2px;">⚙️</span> Ajustes Avançados</label>
+                        <div class="advanced-grid">
+                            <div class="advanced-field">
+                                <span class="advanced-label">Desconto Global</span>
+                                <div class="advanced-inline">
+                                    <select id="globalDiscountType" class="form-control" onchange="onBudgetAdjustmentChange()">
+                                        <option value="fixed">R$</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                    <input type="number" id="globalDiscountValue" class="form-control" value="0" min="0"
+                                        step="0.01" oninput="onBudgetAdjustmentChange()" onchange="onBudgetAdjustmentChange()">
+                                </div>
+                                <span class="advanced-help">Aplicado sobre o subtotal dos itens antes da taxa de serviço.</span>
+                            </div>
+                            <div class="advanced-field">
+                                <span class="advanced-label">Acréscimo</span>
+                                <input type="number" id="additionalCharge" class="form-control" value="0" min="0" step="0.01"
+                                    oninput="onBudgetAdjustmentChange()" onchange="onBudgetAdjustmentChange()">
+                                <span class="advanced-help">Use para deslocamento extra, urgência ou qualquer ajuste comercial.</span>
+                            </div>
+                            <div class="advanced-field">
+                                <span class="advanced-label">Taxa de Serviço</span>
+                                <select id="serviceFeeMode" class="form-control" onchange="onBudgetAdjustmentChange()">
+                                    <option value="auto">Automática</option>
+                                    <option value="manual">Manual</option>
+                                    <option value="none">Isenta</option>
+                                </select>
+                            </div>
+                            <div class="advanced-field disabled" id="manualServiceFeeWrap">
+                                <span class="advanced-label">Valor da Taxa Manual</span>
+                                <input type="number" id="manualServiceFee" class="form-control" value="0" min="0" step="0.01"
+                                    oninput="onBudgetAdjustmentChange()" onchange="onBudgetAdjustmentChange()" disabled>
+                                <span class="advanced-help">Ative apenas quando quiser definir a taxa manualmente.</span>
                             </div>
                         </div>
                     </div>
@@ -1582,6 +1769,7 @@
             setDates();
             renderServicesTable();
             applyPhoneMask();
+            syncAdvancedControls();
             updateSummary();
             updateServiceCounter();
         });
@@ -1628,6 +1816,78 @@
             });
         }
 
+        function getNumericInputValue(id) {
+            const input = document.getElementById(id);
+            if (!input) return 0;
+            const raw = String(input.value || '').replace(',', '.');
+            return Math.max(0, parseFloat(raw) || 0);
+        }
+
+        function getServiceUnitPrice(index) {
+            return getNumericInputValue(`price_${index}`) || 0;
+        }
+
+        function formatCompactNumber(value) {
+            return value.toLocaleString('pt-BR', {
+                minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function getServiceFeeLabel(budget) {
+            return budget.serviceFeeMode === 'manual' ? 'Taxa de serviço (manual)' : 'Taxa de serviço';
+        }
+
+        function syncAdvancedControls() {
+            const serviceFeeMode = document.getElementById('serviceFeeMode')?.value || 'auto';
+            const manualWrap = document.getElementById('manualServiceFeeWrap');
+            const manualInput = document.getElementById('manualServiceFee');
+            const isManual = serviceFeeMode === 'manual';
+
+            if (manualWrap) manualWrap.classList.toggle('disabled', !isManual);
+            if (manualInput) manualInput.disabled = !isManual;
+
+            const discountType = document.getElementById('globalDiscountType')?.value || 'fixed';
+            const discountInput = document.getElementById('globalDiscountValue');
+            if (discountInput) {
+                if (discountType === 'percent') {
+                    if (getNumericInputValue('globalDiscountValue') > 100) {
+                        discountInput.value = 100;
+                    }
+                    discountInput.max = 100;
+                    discountInput.placeholder = '0 a 100';
+                } else {
+                    discountInput.removeAttribute('max');
+                    discountInput.placeholder = '0,00';
+                }
+            }
+        }
+
+        function onBudgetAdjustmentChange() {
+            syncAdvancedControls();
+            updateSummary();
+        }
+
+        function resetServicePrice(index) {
+            const input = document.getElementById(`price_${index}`);
+            if (!input) return;
+            input.value = SERVICES[index].price;
+            onServiceChange(index);
+        }
+
+        function updateServicePriceDisplay(index) {
+            const label = document.getElementById(`priceLabel_${index}`);
+            if (!label) return;
+
+            const currentPrice = getServiceUnitPrice(index);
+            const basePrice = SERVICES[index].price;
+            const hasCustomPrice = Math.abs(currentPrice - basePrice) > 0.009;
+
+            label.innerHTML = hasCustomPrice
+                ? `${formatCurrency(currentPrice)} <span class="svc-price-note">Preço ajustado · tabela ${formatCurrency(basePrice)}</span>`
+                : `${formatCurrency(basePrice)} <span class="svc-price-note">Preço unitário de tabela</span>`;
+        }
+
         // ---- RENDER SERVICES TABLE ----
 
         // ---- RENDER SERVICES TABLE (NOVO MODELO SaaS) ----
@@ -1650,7 +1910,19 @@
                     // Hidden checkbox compatibility
                     const chk = `<input type="checkbox" id="check_${i}" onchange="onServiceChange(${i})" style="display:none">`;
 
-                    const discountHtml = `<div class="svc-discount-wrap"><label>Desc. R$</label><input type="number" id="discount_${i}" value="0" min="0" step="5" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})"></div>`;
+                    const pricingHtml = `
+                        <div class="svc-price" id="priceLabel_${i}">${formatCurrency(svc.price)} <span class="svc-price-note">Preço unitário de tabela</span></div>
+                        <div class="svc-config-grid">
+                            <div class="svc-input-card">
+                                <label>Preço unit.</label>
+                                <input type="number" id="price_${i}" value="${svc.price}" min="0" step="0.01" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})">
+                            </div>
+                            <div class="svc-input-card">
+                                <label>Desc. item</label>
+                                <input type="number" id="discount_${i}" value="0" min="0" step="0.01" onchange="onServiceChange(${i})" oninput="onServiceChange(${i})">
+                            </div>
+                            <button type="button" class="svc-reset-btn" onclick="resetServicePrice(${i})">Restaurar preço de tabela</button>
+                        </div>`;
                     const extraHtml = typeof svc.impermeabilizacao === 'number' ? `
                         <div class="service-extra disabled" id="extraBox_${i}">
                             <div class="service-extra-copy">
@@ -1670,8 +1942,7 @@
                         ${chk}
                         <div class="svc-info">
                             <div class="svc-name">${svc.name}</div>
-                            <div class="svc-price">${formatCurrency(svc.price)}</div>
-                            ${discountHtml}
+                            ${pricingHtml}
                             ${extraHtml}
                         </div>
                         <div class="svc-controls">
@@ -1684,6 +1955,7 @@
                         </div>
                     `;
                     group.appendChild(card);
+                    updateServicePriceDisplay(i);
                     globalIndex++;
                 });
                 container.appendChild(group);
@@ -1756,8 +2028,9 @@
             const qty = parseInt(document.getElementById(`qty_${index}`).value) || 0;
             const row = document.getElementById(`serviceRow_${index}`);
             const totalEl = document.getElementById(`total_${index}`);
-            const discountEl = document.getElementById(`discount_${index}`);
-            const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
+            const unitPrice = getServiceUnitPrice(index);
+            const rawDiscount = getNumericInputValue(`discount_${index}`);
+            const appliedDiscount = Math.min(rawDiscount, unitPrice * qty);
 
             // Auto-check if qty > 0
             if (qty > 0 && !checked) {
@@ -1771,14 +2044,17 @@
             const isChecked = document.getElementById(`check_${index}`).checked;
 
             if (isChecked && qty > 0) {
-                const total = Math.max(0, (SERVICES[index].price * qty) - discount);
+                const total = Math.max(0, (unitPrice * qty) - appliedDiscount);
                 totalEl.textContent = formatCurrency(total);
                 row.classList.add('selected');
+                totalEl.classList.add('active');
             } else {
                 totalEl.textContent = 'R$ 0,00';
                 row.classList.remove('selected');
+                totalEl.classList.remove('active');
             }
 
+            updateServicePriceDisplay(index);
             syncImpermeabilizacaoState(index);
             updateSummary();
             updateServiceCounter();
@@ -1802,12 +2078,16 @@
                 const checked = document.getElementById(`check_${i}`).checked;
                 if (checked) {
                     const qty = parseInt(document.getElementById(`qty_${i}`).value) || 0;
-                    const discountEl = document.getElementById(`discount_${i}`);
-                    const discount = discountEl ? (parseFloat(discountEl.value) || 0) : 0;
-                    const total = Math.max(0, (svc.price * qty) - discount);
+                    const price = getServiceUnitPrice(i);
+                    const grossTotal = price * qty;
+                    const discount = Math.min(getNumericInputValue(`discount_${i}`), grossTotal);
+                    const total = Math.max(0, grossTotal - discount);
                     const serviceItem = {
                         name: svc.name,
-                        price: svc.price,
+                        price,
+                        originalPrice: svc.price,
+                        grossTotal,
+                        hasCustomPrice: Math.abs(price - svc.price) > 0.009,
                         qty: qty,
                         discount: discount,
                         total: total
@@ -1834,10 +2114,24 @@
             });
 
             const subtotal = serviceSubtotal + extraSubtotal;
-            const serviceFee = subtotal > 0 && subtotal < SERVICE_FEE_THRESHOLD
-                ? SERVICE_FEE_THRESHOLD - subtotal
-                : 0;
-            const totalGeral = subtotal + serviceFee;
+            const globalDiscountType = document.getElementById('globalDiscountType')?.value || 'fixed';
+            const globalDiscountValue = getNumericInputValue('globalDiscountValue');
+            const requestedGlobalDiscount = globalDiscountType === 'percent'
+                ? subtotal * (Math.min(globalDiscountValue, 100) / 100)
+                : globalDiscountValue;
+            const globalDiscount = Math.min(subtotal, requestedGlobalDiscount);
+            const additionalCharge = getNumericInputValue('additionalCharge');
+            const adjustedSubtotal = Math.max(0, subtotal - globalDiscount + additionalCharge);
+            const serviceFeeMode = document.getElementById('serviceFeeMode')?.value || 'auto';
+
+            let serviceFee = 0;
+            if (serviceFeeMode === 'manual') {
+                serviceFee = getNumericInputValue('manualServiceFee');
+            } else if (serviceFeeMode === 'auto' && adjustedSubtotal > 0 && adjustedSubtotal < SERVICE_FEE_THRESHOLD) {
+                serviceFee = SERVICE_FEE_THRESHOLD - adjustedSubtotal;
+            }
+
+            const totalGeral = adjustedSubtotal + serviceFee;
             const totalComPix = totalGeral - (totalGeral * PIX_DISCOUNT);
             const parcela = totalGeral / INSTALLMENTS;
 
@@ -1847,6 +2141,13 @@
                 serviceSubtotal,
                 extraSubtotal,
                 subtotal,
+                globalDiscountType,
+                globalDiscountValue,
+                globalDiscount,
+                additionalCharge,
+                adjustedSubtotal,
+                hasAdjustments: globalDiscount > 0 || additionalCharge > 0,
+                serviceFeeMode,
                 serviceFee,
                 totalGeral,
                 totalComPix,
@@ -1856,6 +2157,44 @@
 
         function formatServiceFee(serviceFee) {
             return serviceFee > 0 ? `+ ${formatCurrency(serviceFee)}` : 'Isenta';
+        }
+
+        function buildBudgetSummaryRows(budget, includeTotal = true) {
+            const rows = [
+                { label: 'Subtotal dos serviços', value: formatCurrency(budget.serviceSubtotal) }
+            ];
+
+            if (budget.extraSubtotal > 0) {
+                rows.push({ label: 'Impermeabilização', value: formatCurrency(budget.extraSubtotal) });
+            }
+
+            if (budget.globalDiscount > 0) {
+                rows.push({
+                    label: budget.globalDiscountType === 'percent'
+                        ? `Desconto global (${formatCompactNumber(Math.min(budget.globalDiscountValue, 100))}%)`
+                        : 'Desconto global',
+                    value: `- ${formatCurrency(budget.globalDiscount)}`
+                });
+            }
+
+            if (budget.additionalCharge > 0) {
+                rows.push({ label: 'Acréscimo', value: `+ ${formatCurrency(budget.additionalCharge)}` });
+            }
+
+            if (budget.hasAdjustments) {
+                rows.push({ label: 'Subtotal ajustado', value: formatCurrency(budget.adjustedSubtotal) });
+            }
+
+            rows.push({
+                label: getServiceFeeLabel(budget),
+                value: budget.serviceFee > 0 ? `+ ${formatCurrency(budget.serviceFee)}` : 'Isenta'
+            });
+
+            if (includeTotal) {
+                rows.push({ label: 'Total a Pagar', value: formatCurrency(budget.totalGeral), emphasis: true });
+            }
+
+            return rows;
         }
 
         function updateSummary() {
@@ -1869,6 +2208,34 @@
             } else {
                 extraSubtotalRow.style.display = 'none';
             }
+            const globalDiscountRow = document.getElementById('globalDiscountRow');
+            if (budget.globalDiscount > 0) {
+                globalDiscountRow.style.display = 'flex';
+                document.getElementById('globalDiscountLabel').textContent = budget.globalDiscountType === 'percent'
+                    ? `Desconto global (${formatCompactNumber(Math.min(budget.globalDiscountValue, 100))}%)`
+                    : 'Desconto global';
+                document.getElementById('globalDiscountTotal').textContent = `- ${formatCurrency(budget.globalDiscount)}`;
+            } else {
+                globalDiscountRow.style.display = 'none';
+            }
+
+            const additionalChargeRow = document.getElementById('additionalChargeRow');
+            if (budget.additionalCharge > 0) {
+                additionalChargeRow.style.display = 'flex';
+                document.getElementById('additionalChargeTotal').textContent = `+ ${formatCurrency(budget.additionalCharge)}`;
+            } else {
+                additionalChargeRow.style.display = 'none';
+            }
+
+            const adjustedSubtotalRow = document.getElementById('adjustedSubtotalRow');
+            if (budget.hasAdjustments) {
+                adjustedSubtotalRow.style.display = 'flex';
+                document.getElementById('adjustedSubtotalTotal').textContent = formatCurrency(budget.adjustedSubtotal);
+            } else {
+                adjustedSubtotalRow.style.display = 'none';
+            }
+
+            document.getElementById('serviceFeeLabel').textContent = getServiceFeeLabel(budget);
             document.getElementById('serviceFeeTotal').textContent = formatServiceFee(budget.serviceFee);
             document.getElementById('descontoPix').textContent = formatCurrency(budget.totalComPix);
             document.getElementById('parcela4x').textContent = `4x ${formatCurrency(budget.parcela)}`;
@@ -1884,7 +2251,10 @@
             } else {
                 itemsList.innerHTML = selectedList.map(sv => `
                     <div class="summary-item${sv.isExtra ? ' extra simple' : ' simple'}">
-                        <span class="name">${sv.qty}x ${sv.name}</span>
+                        <div class="summary-item-copy-block">
+                            <span class="name">${sv.qty}x ${sv.name}</span>
+                            ${!sv.isExtra && (sv.hasCustomPrice || sv.discount > 0) ? `<div class="summary-item-reason">${sv.hasCustomPrice ? `Preço unit. ajustado: ${formatCurrency(sv.price)}` : `Preço unit.: ${formatCurrency(sv.price)}`}${sv.discount > 0 ? ` · Desc.: ${formatCurrency(sv.discount)}` : ''}</div>` : ''}
+                        </div>
                         <span class="val">${formatCurrency(sv.total)}</span>
                     </div>
                 `).join('');
@@ -1933,20 +2303,29 @@
             document.getElementById('enderecoCliente').value = '';
             document.getElementById('bairroCliente').value = '';
             document.getElementById('observacoes').value = '';
+            document.getElementById('globalDiscountType').value = 'fixed';
+            document.getElementById('globalDiscountValue').value = 0;
+            document.getElementById('additionalCharge').value = 0;
+            document.getElementById('serviceFeeMode').value = 'auto';
+            document.getElementById('manualServiceFee').value = 0;
 
             SERVICES.forEach((svc, i) => {
                 document.getElementById(`check_${i}`).checked = false;
                 document.getElementById(`qty_${i}`).value = 0;
+                document.getElementById(`price_${i}`).value = svc.price;
                 document.getElementById(`total_${i}`).textContent = 'R$ 0,00';
+                document.getElementById(`total_${i}`).classList.remove('active');
                 document.getElementById(`serviceRow_${i}`).classList.remove('selected');
                 document.getElementById(`serviceRow_${i}`).classList.remove('has-protection');
                 const discountEl = document.getElementById(`discount_${i}`);
                 if (discountEl) discountEl.value = 0;
                 const extraInput = getImpermeabilizacaoInput(i);
                 if (extraInput) extraInput.checked = false;
+                updateServicePriceDisplay(i);
                 syncImpermeabilizacaoState(i);
             });
 
+            syncAdvancedControls();
             generateBudgetNumber();
             setDates();
             updateSummary();
@@ -1964,15 +2343,34 @@
                 const qtyStr = item.qty > 1 ? ` (${item.qty}x)` : '';
                 return `✔ ${item.name}${qtyStr} — *${formatCurrency(item.total)}*`;
             }).join('\n');
+            const adjustmentLines = [];
+
+            if (budget.globalDiscount > 0) {
+                adjustmentLines.push(`*Desconto aplicado:* -${formatCurrency(budget.globalDiscount)}`);
+            }
+
+            if (budget.additionalCharge > 0) {
+                adjustmentLines.push(`*Acréscimo:* +${formatCurrency(budget.additionalCharge)}`);
+            }
+
+            if (budget.serviceFee > 0) {
+                adjustmentLines.push(`*${getServiceFeeLabel(budget)}:* ${formatCurrency(budget.serviceFee)}`);
+                adjustmentLines.push(`Valor aplicado para cobrir deslocamento e custos operacionais em pedidos abaixo do valor mínimo.`);
+            }
+
+            const adjustmentsBlock = adjustmentLines.length
+                ? `*Ajustes do orçamento:*\n${adjustmentLines.join('\n')}\n\n`
+                : '';
 
             let msg = `Perfeito! Te enviei o orçamento 😊\n\n`;
-        msg += `*Serviço solicitado:*\n`;
-        msg += `${serviceLines}\n\n`;
-        msg += `*Formas de pagamento:*\n`;
-        msg += `PIX à vista: *${formatCurrency(budget.totalPix)}*\n`;
-        msg += `Cartão: *4x de ${formatCurrency(budget.parcela)} sem juros*\n\n`;
-        msg += `A limpeza inclui higienização completa, remoção de sujeira profunda, ácaros e odores.\n\n`;
-        msg += `Tenho disponibilidade aí na sua região essa semana, Qual dia costuma ser melhor pra você?`;
+            msg += `*Serviço solicitado:*\n`;
+            msg += `${serviceLines}\n\n`;
+            msg += adjustmentsBlock;
+            msg += `*Formas de pagamento:*\n`;
+            msg += `PIX à vista: *${formatCurrency(budget.totalComPix)}*\n`;
+            msg += `Cartão: *4x de ${formatCurrency(budget.parcela)} sem juros*\n\n`;
+            msg += `A limpeza inclui higienização completa, remoção de sujeira profunda, ácaros e odores.\n\n`;
+            msg += `Tenho disponibilidade aí na sua região essa semana, Qual dia costuma ser melhor pra você?`;
 
             navigator.clipboard.writeText(msg).then(() => {
                 showToast('✅ Mensagem copiada para o WhatsApp!');
@@ -2017,6 +2415,7 @@
             const items = budget.lineItems;
             const bairro = document.getElementById('bairroCliente').value;
             const obs = document.getElementById('observacoes').value.trim();
+            const summaryRows = buildBudgetSummaryRows(budget, false).map(row => `<p><strong>${row.label}:</strong> ${row.value}</p>`).join('');
 
             let serviceRows = '';
             items.forEach((sv) => {
@@ -2086,9 +2485,7 @@
                 </table>
 
                 <div class="preview-summary">
-                    <p><strong>Subtotal dos serviços:</strong> ${formatCurrency(budget.serviceSubtotal)}</p>
-                    ${budget.extraSubtotal > 0 ? `<p><strong>Impermeabilização:</strong> ${formatCurrency(budget.extraSubtotal)}</p>` : ''}
-                    <p><strong>Taxa de serviço:</strong> ${budget.serviceFee > 0 ? `+ ${formatCurrency(budget.serviceFee)}` : 'Isenta'}</p>
+                    ${summaryRows}
                 </div>
 
                 <div class="preview-total-box">
@@ -2152,13 +2549,21 @@
                 const helveticaBoldOblique = await pdfDoc.embedFont(StandardFonts.HelveticaBoldOblique);
 
                 // Get pages
-                const pages = pdfDoc.getPages();
+                let pages = pdfDoc.getPages();
+                if (!pages.length) {
+                    throw new Error('O template PDF está vazio.');
+                }
 
-                // PAGE 1: Keep as-is (follow-up page), no changes needed
+                // Garante 2 páginas no PDF final:
+                // mantém a primeira página original e cria uma segunda página limpa para o orçamento.
+                if (pages.length === 1) {
+                    const firstPageSize = pages[0].getSize();
+                    pdfDoc.addPage([firstPageSize.width, firstPageSize.height]);
+                    pages = pdfDoc.getPages();
+                }
 
-                // PAGE 2: Budget page - overlay dynamic data
-                const page2 = pages[1];
-                const { width, height } = page2.getSize();
+                const budgetPage = pages[1];
+                const { width, height } = budgetPage.getSize();
 
                 // Colors
                 const AZUL_ESCURO = rgb(26 / 255, 60 / 255, 94 / 255);
@@ -2183,7 +2588,7 @@
                 // CLEAR lower page 2 (everything below blue header)
                 // ========================================
                 // Erase from bottom up to y=675
-                page2.drawRectangle({
+                budgetPage.drawRectangle({
                     x: 0, y: 0, width: width, height: 675,
                     color: BRANCO,
                 });
@@ -2196,11 +2601,11 @@
                 // ---- TABLE 1: Info (Orçamento, Data, Validade, Valor) ----
                 const t1Row1H = 20; // Header row
                 const t1Row2H = 34; // Data row
-                page2.drawRectangle({
+                budgetPage.drawRectangle({
                     x: marginX, y: currentY - t1Row1H, width: tableW, height: t1Row1H,
                     borderColor: PRETO, borderWidth: 1
                 });
-                page2.drawRectangle({
+                budgetPage.drawRectangle({
                     x: marginX, y: currentY - t1Row1H - t1Row2H, width: tableW, height: t1Row2H,
                     borderColor: PRETO, borderWidth: 1
                 });
@@ -2210,7 +2615,7 @@
                 // Vertical lines
                 for (let i = 0; i < 3; i++) {
                     curX += colsT1[i];
-                    page2.drawLine({
+                    budgetPage.drawLine({
                         start: { x: curX, y: currentY },
                         end: { x: curX, y: currentY - t1Row1H - t1Row2H },
                         color: PRETO, thickness: 1
@@ -2223,7 +2628,7 @@
                 for (let i = 0; i < 4; i++) {
                     const txt = headersT1[i];
                     const txtW = helveticaBoldOblique.widthOfTextAtSize(txt, 10);
-                    page2.drawText(txt, {
+                    budgetPage.drawText(txt, {
                         x: curX + (colsT1[i] / 2) - (txtW / 2),
                         y: currentY - 14,
                         size: 10, font: helveticaBoldOblique, color: PRETO
@@ -2233,15 +2638,15 @@
 
                 // Data Texts
                 const dataY = currentY - t1Row1H - 18;
-                page2.drawText(numOrc, {
+                budgetPage.drawText(numOrc, {
                     x: marginX + (colsT1[0] / 2) - (helvetica.widthOfTextAtSize(numOrc, 10) / 2),
                     y: dataY, size: 10, font: helvetica, color: PRETO
                 });
-                page2.drawText(dataEmissao, {
+                budgetPage.drawText(dataEmissao, {
                     x: marginX + colsT1[0] + (colsT1[1] / 2) - (helvetica.widthOfTextAtSize(dataEmissao, 10) / 2),
                     y: dataY, size: 10, font: helvetica, color: PRETO
                 });
-                page2.drawText(dataValidade, {
+                budgetPage.drawText(dataValidade, {
                     x: marginX + colsT1[0] + colsT1[1] + (colsT1[2] / 2) - (helvetica.widthOfTextAtSize(dataValidade, 10) / 2),
                     y: dataY, size: 10, font: helvetica, color: PRETO
                 });
@@ -2250,11 +2655,11 @@
                 const v4x = `4x de ${formatCurrency(budget.parcela)}`;
                 const vVista = `ou ${formatCurrency(budget.totalComPix)} à vista`;
                 const vXBase = marginX + colsT1[0] + colsT1[1] + colsT1[2] + (colsT1[3] / 2);
-                page2.drawText(v4x, {
+                budgetPage.drawText(v4x, {
                     x: vXBase - (helveticaBoldOblique.widthOfTextAtSize(v4x, 12) / 2),
                     y: dataY + 4, size: 12, font: helveticaBoldOblique, color: PRETO
                 });
-                page2.drawText(vVista, {
+                budgetPage.drawText(vVista, {
                     x: vXBase - (helvetica.widthOfTextAtSize(vVista, 9) / 2),
                     y: dataY - 8, size: 9, font: helvetica, color: PRETO
                 });
@@ -2263,33 +2668,33 @@
 
                 // ---- TABLE 2: Client Info ----
                 const clientBoxH = 50;
-                page2.drawRectangle({
+                budgetPage.drawRectangle({
                     x: marginX, y: currentY - clientBoxH, width: tableW, height: clientBoxH,
                     borderColor: PRETO, borderWidth: 1
                 });
 
                 const clientLabel = 'Cliente: ';
                 const clientLabelW = helveticaBoldOblique.widthOfTextAtSize(clientLabel, 10);
-                page2.drawText(clientLabel, { // Fix: use helveticaBoldOblique for italic label
+                budgetPage.drawText(clientLabel, { // Fix: use helveticaBoldOblique for italic label
                     x: marginX + 5, y: currentY - 20, size: 10, font: helveticaBoldOblique, color: PRETO
                 });
-                page2.drawText(`${nomeCliente}${telefone ? '    ' + telefone : ''}`, {
+                budgetPage.drawText(`${nomeCliente}${telefone ? '    ' + telefone : ''}`, {
                     x: marginX + 5 + clientLabelW, y: currentY - 20, size: 10, font: helvetica, color: PRETO
                 });
 
                 const endLabel = 'Endereço: ';
                 const endLabelW = helveticaBoldOblique.widthOfTextAtSize(endLabel, 10);
-                page2.drawText(endLabel, { // Fix: use helveticaBoldOblique for italic label
+                budgetPage.drawText(endLabel, { // Fix: use helveticaBoldOblique for italic label
                     x: marginX + 5, y: currentY - 40, size: 10, font: helveticaBoldOblique, color: PRETO
                 });
-                page2.drawText(enderecoFull || '—', {
+                budgetPage.drawText(enderecoFull || '—', {
                     x: marginX + 5 + endLabelW, y: currentY - 40, size: 10, font: helvetica, color: PRETO
                 });
 
                 currentY -= (clientBoxH + 15);
 
                 // ---- TABLE 3: Services ----
-                page2.drawText('Descrição do serviço', {
+                budgetPage.drawText('Descrição do serviço', {
                     x: marginX, y: currentY - 14, size: 11, font: helveticaBoldOblique, color: PRETO
                 });
                 currentY -= 20;
@@ -2297,7 +2702,7 @@
                 const t3HeaderH = 20;
                 const svcCols = [tableW * 0.40, tableW * 0.12, tableW * 0.24, tableW * 0.24];
 
-                page2.drawRectangle({
+                budgetPage.drawRectangle({
                     x: marginX, y: currentY - t3HeaderH, width: tableW, height: t3HeaderH,
                     borderColor: PRETO, borderWidth: 1
                 });
@@ -2306,20 +2711,20 @@
                 curX = marginX;
                 for (let i = 0; i < 3; i++) {
                     curX += svcCols[i];
-                    page2.drawLine({
+                    budgetPage.drawLine({
                         start: { x: curX, y: currentY }, end: { x: curX, y: currentY - t3HeaderH }, color: PRETO, thickness: 1
                     });
                 }
 
                 // Headers
                 const svcHeaders = ['Serviço', '', 'Valor unitário', 'Valor total'];
-                page2.drawText(svcHeaders[0], { x: marginX + 5, y: currentY - 14, size: 10, font: helveticaBoldOblique, color: PRETO });
+                budgetPage.drawText(svcHeaders[0], { x: marginX + 5, y: currentY - 14, size: 10, font: helveticaBoldOblique, color: PRETO });
                 // We don't draw text for qty header
-                page2.drawText(svcHeaders[2], {
+                budgetPage.drawText(svcHeaders[2], {
                     x: marginX + svcCols[0] + svcCols[1] + (svcCols[2] / 2) - (helveticaBoldOblique.widthOfTextAtSize(svcHeaders[2], 10) / 2),
                     y: currentY - 14, size: 10, font: helveticaBoldOblique, color: PRETO
                 });
-                page2.drawText(svcHeaders[3], {
+                budgetPage.drawText(svcHeaders[3], {
                     x: marginX + svcCols[0] + svcCols[1] + svcCols[2] + (svcCols[3] / 2) - (helveticaBoldOblique.widthOfTextAtSize(svcHeaders[3], 10) / 2),
                     y: currentY - 14, size: 10, font: helveticaBoldOblique, color: PRETO
                 });
@@ -2329,7 +2734,7 @@
                 // Service Rows
                 items.forEach(sv => {
                     const rowH = 34; // Generous height for potential 2 lines
-                    page2.drawRectangle({
+                    budgetPage.drawRectangle({
                         x: marginX, y: currentY - rowH, width: tableW, height: rowH,
                         borderColor: PRETO, borderWidth: 1
                     });
@@ -2338,7 +2743,7 @@
                     let cx = marginX;
                     for (let i = 0; i < 3; i++) {
                         cx += svcCols[i];
-                        page2.drawLine({
+                        budgetPage.drawLine({
                             start: { x: cx, y: currentY }, end: { x: cx, y: currentY - rowH }, color: PRETO, thickness: 1
                         });
                     }
@@ -2347,23 +2752,23 @@
                     const nameLines = splitText(sv.name, helvetica, 9, svcCols[0] - 10);
                     let ny = currentY - 12;
                     nameLines.forEach(line => {
-                        page2.drawText(line, { x: marginX + 5, y: ny, size: 9, font: helvetica, color: PRETO });
+                        budgetPage.drawText(line, { x: marginX + 5, y: ny, size: 9, font: helvetica, color: PRETO });
                         ny -= 12;
                     });
 
-                    page2.drawText(String(sv.qty), {
+                    budgetPage.drawText(String(sv.qty), {
                         x: marginX + svcCols[0] + (svcCols[1] / 2) - (helvetica.widthOfTextAtSize(String(sv.qty), 9) / 2),
                         y: currentY - 20, size: 9, font: helvetica, color: PRETO
                     });
 
                     const pStr = typeof sv.price === 'number' ? formatCurrency(sv.price) : sv.price;
-                    page2.drawText(pStr, {
+                    budgetPage.drawText(pStr, {
                         x: marginX + svcCols[0] + svcCols[1] + (svcCols[2] / 2) - (helvetica.widthOfTextAtSize(pStr, 9) / 2),
                         y: currentY - 20, size: 9, font: helvetica, color: PRETO
                     });
 
                     const tStr = formatCurrency(sv.total);
-                    page2.drawText(tStr, {
+                    budgetPage.drawText(tStr, {
                         x: marginX + svcCols[0] + svcCols[1] + svcCols[2] + (svcCols[3] / 2) - (helvetica.widthOfTextAtSize(tStr, 9) / 2),
                         y: currentY - 20, size: 9, font: helvetica, color: PRETO
                     });
@@ -2374,30 +2779,30 @@
                 currentY -= 15;
 
                 // ---- TABLE 4: Resumo ----
-                page2.drawText('Resumo do investimento', {
+                budgetPage.drawText('Resumo do investimento', {
                     x: marginX, y: currentY - 14, size: 11, font: helveticaBoldOblique, color: PRETO
                 });
                 currentY -= 20;
 
-                const summaryRows = [
-                    { label: 'Subtotal dos serviços', value: formatCurrency(budget.serviceSubtotal), font: helvetica, size: 10 },
-                    ...(budget.extraSubtotal > 0 ? [{ label: 'Impermeabilização', value: formatCurrency(budget.extraSubtotal), font: helvetica, size: 10 }] : []),
-                    { label: 'Taxa de serviço', value: budget.serviceFee > 0 ? formatCurrency(budget.serviceFee) : 'Isenta', font: helvetica, size: 10 },
-                    { label: 'Total a Pagar', value: formatCurrency(budget.totalGeral), font: helveticaBold, size: 11 }
-                ];
+                const summaryRows = buildBudgetSummaryRows(budget).map(row => ({
+                    label: row.label,
+                    value: row.value,
+                    font: row.emphasis ? helveticaBold : helvetica,
+                    size: row.emphasis ? 11 : 10
+                }));
 
                 summaryRows.forEach((row) => {
                     const rowH = 24;
-                    page2.drawRectangle({
+                    budgetPage.drawRectangle({
                         x: marginX, y: currentY - rowH, width: tableW, height: rowH,
                         borderColor: PRETO, borderWidth: 1
                     });
 
-                    page2.drawText(row.label, {
+                    budgetPage.drawText(row.label, {
                         x: marginX + 5, y: currentY - 16, size: row.size, font: row.font, color: PRETO
                     });
 
-                    page2.drawText(row.value, {
+                    budgetPage.drawText(row.value, {
                         x: marginX + tableW - 5 - row.font.widthOfTextAtSize(row.value, row.size),
                         y: currentY - 16, size: row.size, font: row.font, color: PRETO
                     });
@@ -2411,7 +2816,7 @@
                 const footerText = obsCustom || 'A taxa de serviço da Damas Clean pode ser isentada para serviços que ultrapassem duzentos e vinte reais. Para valores de agendamentos que fiquem menores que esse valor, uma taxa de serviço será cobrada para arcar com custos de operação, deslocamento e atendimento. O valor pode variar de acordo com a região do usuário devido às variações de custo de cada cidade.';
                 const footLines = splitText(footerText, helvetica, 7.5, tableW);
                 footLines.forEach(l => {
-                    page2.drawText(l, { x: marginX, y: currentY, size: 7.5, font: helvetica, color: PRETO });
+                    budgetPage.drawText(l, { x: marginX, y: currentY, size: 7.5, font: helvetica, color: PRETO });
                     currentY -= 10;
                 });
 
