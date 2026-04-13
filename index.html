@@ -1537,10 +1537,10 @@
             {
                 category: 'SOFÁS',
                 services: [
-                    { name: 'Sofá 2 lugares', price: 180, impermeabilizacao: 180, impermeabilizacaoLabel: 'Impermeab. Sofá 2 lugares' },
-                    { name: 'Sofá 3 lugares', price: 220, impermeabilizacao: 220, impermeabilizacaoLabel: 'Impermeab. Sofá 3 lugares' },
-                    { name: 'Sofá retrátil / chaise', price: 250, impermeabilizacao: 250, impermeabilizacaoLabel: 'Impermeab. Sofá retrátil / chaise' },
-                    { name: 'Sofá em L (canto)', price: 280, impermeabilizacao: 260, impermeabilizacaoLabel: 'Impermeab. Sofá em L' },
+                    { name: 'Sofá 2 lugares', price: 140, impermeabilizacao: 180, impermeabilizacaoLabel: 'Impermeab. Sofá 2 lugares' },
+                    { name: 'Sofá 3 lugares', price: 160, impermeabilizacao: 220, impermeabilizacaoLabel: 'Impermeab. Sofá 3 lugares' },
+                    { name: 'Sofá retrátil / chaise', price: 200, impermeabilizacao: 250, impermeabilizacaoLabel: 'Impermeab. Sofá retrátil / chaise' },
+                    { name: 'Sofá em L (canto)', price: 250, impermeabilizacao: 260, impermeabilizacaoLabel: 'Impermeab. Sofá em L' },
                     { name: 'Sofá 4 lugares ou mais', price: 300 },
                 ]
             },
@@ -1549,16 +1549,16 @@
                 services: [
                     { name: 'Colchão solteiro', price: 150, impermeabilizacao: 100, impermeabilizacaoLabel: 'Impermeab. Colchão solteiro' },
                     { name: 'Colchão casal', price: 180, impermeabilizacao: 130, impermeabilizacaoLabel: 'Impermeab. Colchão casal' },
-                    { name: 'Colchão queen', price: 230, impermeabilizacao: 150, impermeabilizacaoLabel: 'Impermeab. Colchão queen' },
-                    { name: 'Colchão king', price: 250 },
+                    { name: 'Colchão queen', price: 210, impermeabilizacao: 150, impermeabilizacaoLabel: 'Impermeab. Colchão queen' },
+                    { name: 'Colchão king', price: 240 },
                 ]
             },
             {
                 category: 'OUTROS',
                 services: [
-                    { name: 'Poltrona', price: 80, impermeabilizacao: 70, impermeabilizacaoLabel: 'Impermeab. Poltrona' },
+                    { name: 'Poltrona', price: 70, impermeabilizacao: 70, impermeabilizacaoLabel: 'Impermeab. Poltrona' },
                     { name: 'Cadeira estofada', price: 40 },
-                    { name: 'Carro (completo)', price: 350 },
+                    { name: 'Carro (completo)', price: 300 },
                 ]
             }
         ];
@@ -1915,14 +1915,7 @@
 
         // ---- VALIDATION ----
         function validate() {
-            const nome = document.getElementById('nomeCliente').value.trim();
             const services = getSelectedServices();
-
-            if (!nome) {
-                showToast('Preencha o nome do cliente.', true);
-                document.getElementById('nomeCliente').focus();
-                return false;
-            }
 
             if (services.length === 0) {
                 showToast('Selecione ao menos um serviço.', true);
@@ -1935,6 +1928,7 @@
         // ---- CLEAR ----
         function limparFormulario() {
             document.getElementById('nomeCliente').value = '';
+            document.getElementById('miniClientName').textContent = 'Cliente não informado';
             document.getElementById('telefoneCliente').value = '';
             document.getElementById('enderecoCliente').value = '';
             document.getElementById('bairroCliente').value = '';
@@ -2073,7 +2067,7 @@
                 </table>
 
                 <div class="preview-client-box">
-                    <p><strong>Cliente:</strong> ${document.getElementById('nomeCliente').value}</p>
+                    <p><strong>Cliente:</strong> ${document.getElementById('nomeCliente').value || 'Cliente não informado'}</p>
                     <p><strong>Telefone:</strong> ${document.getElementById('telefoneCliente').value || '—'}</p>
                     <p><strong>Endereço:</strong> ${document.getElementById('enderecoCliente').value || '—'}${bairro ? ' - ' + bairro : ''}</p>
                 </div>
@@ -2178,7 +2172,7 @@
                 const numOrc = document.getElementById('numOrcamento').value;
                 const dataEmissao = document.getElementById('dataEmissao').value;
                 const dataValidade = document.getElementById('dataValidade').value;
-                const nomeCliente = document.getElementById('nomeCliente').value;
+                const nomeCliente = document.getElementById('nomeCliente').value.trim() || 'Cliente não informado';
                 const telefone = document.getElementById('telefoneCliente').value || '';
                 const endereco = document.getElementById('enderecoCliente').value || '';
                 const bairro = document.getElementById('bairroCliente').value || '';
@@ -2427,7 +2421,7 @@
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                const nomeClienteFile = nomeCliente.replace(/[^a-zA-ZÀ-ú\s]/g, '').trim().replace(/\s+/g, '_');
+                const nomeClienteFile = nomeCliente.replace(/[^a-zA-ZÀ-ú\s]/g, '').trim().replace(/\s+/g, '_') || 'Cliente_nao_informado';
                 link.download = `Orcamento_${numOrc}_${nomeClienteFile}.pdf`;
                 link.click();
                 URL.revokeObjectURL(url);
