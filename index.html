@@ -2386,6 +2386,52 @@
             });
         }
 
+        function copiarWhatsApp() {
+            if (!validate()) return;
+
+            const budget = getBudgetData();
+            const servicos = budget.lineItems.map(item => {
+                const qtyStr = item.qty > 1 ? ` (${item.qty}x)` : '';
+                return `✔ ${item.name}${qtyStr} — *${formatCurrency(item.total)}*`;
+            }).join('\n');
+            const total = formatCurrency(budget.totalGeral);
+            const pix = formatCurrency(budget.totalComPix);
+            const cartao = `4x de ${formatCurrency(budget.parcela)} sem juros`;
+
+            const msg = `Segue o orçamento conforme solicitado 😊
+━━━━━━━━━━━━━━━━━━━
+🛋️ SERVIÇOS
+━━━━━━━━━━━━━━━━━━━
+${servicos}
+━━━━━━━━━━━━━━━━━━━
+💰 Total: ${total}
+
+💳 Formas de pagamento:
+🟢 PIX à vista → ${pix}
+💳 Cartão → ${cartao}
+━━━━━━━━━━━━━━━━━━━
+✨ O serviço inclui:
+✔ Higienização completa
+✔ Remoção de sujeira profunda
+✔ Eliminação de ácaros e odores
+━━━━━━━━━━━━━━━━━━━
+📅 Já tenho atendimento na sua região essa semana 👍
+
+Qual dia fica melhor pra você?`;
+
+            navigator.clipboard.writeText(msg).then(() => {
+                showToast('✅ Mensagem copiada para o WhatsApp!');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = msg;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('✅ Mensagem copiada para o WhatsApp!');
+            });
+        }
+
         // ---- PREVIEW ----
         function preVisualizar() {
             if (!validate()) return;
