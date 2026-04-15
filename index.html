@@ -2432,6 +2432,43 @@ Qual dia fica melhor pra você?`;
             });
         }
 
+        function copiarWhatsApp() {
+            if (!validate()) return;
+
+            const budget = getBudgetData();
+            const divider = '━━━━━━━━━━━━━━━━━━━';
+            const servicos = budget.lineItems.map(item => {
+                const qtyStr = item.qty > 1 ? ` (${item.qty}x)` : '';
+                return `\u2705 ${item.name}${qtyStr} \u2192 ${formatCurrency(item.total)}`;
+            }).join('\n');
+            const total = formatCurrency(budget.totalGeral);
+            const pix = `${formatCurrency(budget.totalComPix)} (5% OFF)`;
+            const cartao = `4x de ${formatCurrency(budget.parcela)} sem juros`;
+
+            const msg = `Segue o orçamento conforme solicitado!
+${divider}
+\u{1F6CB}\uFE0F SERVIÇOS
+${divider}
+${servicos}
+${divider}
+\u{1F4B0} Total: ${total}
+\u{1F4B3} Formas de pagamento:
+\u{1F7E2} PIX à vista \u2192 ${pix}
+\u{1F4B3} Cartão \u2192 ${cartao}`;
+
+            navigator.clipboard.writeText(msg).then(() => {
+                showToast('✅ Mensagem copiada para o WhatsApp!');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = msg;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('✅ Mensagem copiada para o WhatsApp!');
+            });
+        }
+
         // ---- PREVIEW ----
         function preVisualizar() {
             if (!validate()) return;
