@@ -12,28 +12,28 @@
         {
             category: 'SOF\u00C1S',
             services: [
-                { name: 'Sof\u00E1 2 lugares', price: 220, impermeabilizacao: 180, comboGroup: 'sofa' },
-                { name: 'Sof\u00E1 3 lugares', price: 280, impermeabilizacao: 220, comboGroup: 'sofa' },
-                { name: 'Sof\u00E1 retr\u00E1til / chaise', price: 320, impermeabilizacao: 250, comboGroup: 'sofa' },
-                { name: 'Sof\u00E1 em L (canto)', price: 380, impermeabilizacao: 260, comboGroup: 'sofa' },
-                { name: 'Sof\u00E1 4 lugares ou mais', price: 420, impermeabilizacao: null, comboGroup: 'sofa' }
+                { name: 'Sof\u00E1 2 lugares', price: 160, impermeabilizacao: 180, comboGroup: 'sofa' },
+                { name: 'Sof\u00E1 3 lugares', price: 180, impermeabilizacao: 220, comboGroup: 'sofa' },
+                { name: 'Sof\u00E1 retr\u00E1til / chaise', price: 200, impermeabilizacao: 250, comboGroup: 'sofa' },
+                { name: 'Sof\u00E1 em L (canto)', price: 250, impermeabilizacao: 260, comboGroup: 'sofa' },
+                { name: 'Sof\u00E1 4 lugares ou mais', price: 300, impermeabilizacao: null, comboGroup: 'sofa' }
             ]
         },
         {
             category: 'COLCH\u00D5ES',
             services: [
-                { name: 'Colch\u00E3o solteiro', price: 180, impermeabilizacao: 100, comboGroup: 'colchao' },
-                { name: 'Colch\u00E3o casal', price: 250, impermeabilizacao: 130, comboGroup: 'colchao' },
-                { name: 'Colch\u00E3o queen', price: 280, impermeabilizacao: 150, comboGroup: 'colchao' },
-                { name: 'Colch\u00E3o king', price: 300, impermeabilizacao: null, comboGroup: 'colchao' }
+                { name: 'Colch\u00E3o solteiro', price: 80, impermeabilizacao: 100, comboGroup: 'colchao' },
+                { name: 'Colch\u00E3o casal', price: 150, impermeabilizacao: 130, comboGroup: 'colchao' },
+                { name: 'Colch\u00E3o queen', price: 180, impermeabilizacao: 150, comboGroup: 'colchao' },
+                { name: 'Colch\u00E3o king', price: 220, impermeabilizacao: null, comboGroup: 'colchao' }
             ]
         },
         {
             category: 'OUTROS',
             services: [
-                { name: 'Poltrona', price: 100, impermeabilizacao: 70, comboGroup: 'poltrona' },
-                { name: 'Cadeira estofada', price: 60, impermeabilizacao: null, comboGroup: 'cadeira' },
-                { name: 'Carro (completo)', price: 450, impermeabilizacao: null, comboGroup: 'automotivo' }
+                { name: 'Poltrona', price: 70, impermeabilizacao: 70, comboGroup: 'poltrona' },
+                { name: 'Cadeira estofada', price: 40, impermeabilizacao: null, comboGroup: 'cadeira' },
+                { name: 'Carro (completo)', price: 300, impermeabilizacao: null, comboGroup: 'automotivo' }
             ]
         }
     ];
